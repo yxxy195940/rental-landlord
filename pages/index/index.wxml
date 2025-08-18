@@ -1,0 +1,49 @@
+<!--pages/index/index.wxml-->
+<view class="page-container">
+  <!-- Header -->
+  <view class="header">
+    <view class="header-title">房租管理</view>
+    <view class="header-subtitle">轻松管理您的房产</view>
+  </view>
+
+  <!-- Main Content -->
+  <view class="content">
+    <!-- Quick Actions -->
+    <view class="section">
+      <view class="section-title">核心功能</view>
+      <view class="quick-actions-grid">
+        <view class="action-card" bindtap="goToRooms">
+          <image class="action-icon" src="/images/home-active.svg" />
+          <view class="action-text">房间管理</view>
+        </view>
+        <view class="action-card" bindtap="goToMeterReading">
+          <image class="action-icon" src="/images/bill-active.svg" />
+          <view class="action-text">抄表录入</view>
+        </view>
+        <view class="action-card" bindtap="goToBills">
+          <image class="action-icon" src="/images/bill.svg" />
+          <view class="action-text">账单中心</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Overview -->
+    <view class="section">
+      <view class="section-title">本月概览</view>
+      <view class="overview-card">
+        <view class="overview-item">
+          <view class="overview-value">{{monthlyStats.totalBills}}</view>
+          <view class="overview-label">总账单</view>
+        </view>
+        <view class="overview-item">
+          <view class="overview-value text-green">{{monthlyStats.paidBills}}</view>
+          <view class="overview-label">已收款</view>
+        </view>
+        <view class="overview-item">
+          <view class="overview-value text-orange">{{monthlyStats.unpaidBills}}</view>
+          <view class="overview-label">待收款</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

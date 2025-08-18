@@ -1,0 +1,17 @@
+{
+  "name": "rental-landlord-mp",
+  "version": "1.0.0",
+  "description": "房租管理系统 - 房东微信小程序",
+  "main": "app.js",
+  "scripts": {},
+  "keywords": [
+    "miniprogram",
+    "rental",
+    "landlord"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vant/weapp": "^1.11.7"
+  }
+}

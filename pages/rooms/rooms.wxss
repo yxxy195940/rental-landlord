@@ -1,0 +1,191 @@
+/* pages/rooms/rooms.wxss */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f7f8fa;
+}
+
+/* 楼栋管理 */
+.building-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #ebedf0;
+}
+
+.building-selector {
+  display: flex;
+  align-items: center;
+}
+
+.building-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 5px;
+}
+
+.building-manage {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.manage-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+/* 搜索和统计 */
+.search-container, .stats-container {
+  padding: 10px 15px;
+  background-color: #fff;
+}
+
+.search-input {
+  background-color: #f7f8fa;
+  padding: 8px 12px;
+  border-radius: 15px;
+  font-size: 14px;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  font-size: 14px;
+  color: #555;
+  border-top: 1px solid #ebedf0;
+}
+
+/* 房间列表 */
+.room-list-scroll {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+.room-list {
+  padding: 15px;
+}
+
+.room-card-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  transition: transform 0.2s;
+}
+
+.room-card-wrapper.delete-mode {
+  transform: translateX(-40px);
+}
+
+.room-checkbox {
+  margin-right: 10px;
+}
+
+.room-card {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 15px;
+}
+
+.room-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.room-name-status {
+  display: flex;
+  align-items: center;
+}
+
+.room-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.room-status {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  margin-left: 10px;
+}
+
+.status-vacant {
+  background-color: #fffbe8;
+  color: #f5a623;
+}
+
+.status-rented {
+  background-color: #e6f8f0;
+  color: #07c160;
+}
+
+.room-rent {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff5b5b;
+}
+
+.room-card-body {
+  padding-top: 10px;
+  font-size: 14px;
+  color: #888;
+}
+
+.tenant-info {
+  margin-bottom: 5px;
+}
+
+/* 底部按钮 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background-color: #fff;
+  border-top: 1px solid #ebedf0;
+}
+
+.action-btn {
+  flex: 1;
+  margin: 0 5px;
+  border-radius: 20px;
+}
+
+.primary-btn {
+  background-color: #1989fa;
+  color: #fff;
+}
+
+.cancel-btn {
+  background-color: #f7f8fa;
+  color: #555;
+}
+
+.confirm-btn {
+  background-color: #ee0a24;
+  color: #fff;
+}
+
+.empty-list {
+  text-align: center;
+  padding: 50px 0;
+  color: #999;
+}

@@ -1,0 +1,228 @@
+<!--pages/roomDetail/roomDetail.wxml-->
+<view class="page">
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button bindtap="loadRoomDetail" data-room-id="{{roomId}}">重试</button>
+  </view>
+
+  <view wx:else="{{roomDetail}}" class="content">
+    <!-- 基本信息 -->
+    <view class="info-section">
+      <view class="section-header">
+        <text class="section-icon">📍</text>
+        <text class="section-title">基本信息</text>
+      </view>
+      <view class="info-card">
+        <view class="room-header">
+          <text class="room-number">{{roomDetail.roomNumber}}室</text>
+          <view class="status-badge status-{{roomDetail.status}}">
+            <text class="status-icon">{{m1.getRoomStatusIcon(roomDetail.status)}}</text>
+            <text class="status-text">{{m1.getRoomStatusText(roomDetail.status)}}</text>
+          </view>
+        </view>
+        <view class="info-grid">
+          <view class="info-item">
+            <text class="label">月租金</text>
+            <text class="value highlight">¥{{roomDetail.monthlyRent || 0}}</text>
+          </view>
+          <view class="info-item">
+            <text class="label">押金</text>
+            <text class="value">¥{{roomDetail.deposit || 0}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 租客信息 -->
+    <view class="info-section" wx:if="{{roomDetail.status === 2}}">
+      <view class="section-header">
+        <text class="section-icon">👤</text>
+        <text class="section-title">租客信息</text>
+        <text class="header-action" bindtap="updateRegisterInfo">更新</text>
+      </view>
+      <view class="info-card">
+        <view class="info-row">
+          <text class="label">姓名</text>
+          <text class="value {{!roomDetail.tenantName ? 'placeholder' : ''}}">
+            {{roomDetail.tenantName || '未填写'}}
+          </text>
+        </view>
+        <view class="info-row">
+          <text class="label">手机</text>
+          <view class="value-with-action">
+            <text class="value {{!roomDetail.tenantPhone ? 'placeholder' : ''}}">
+              {{roomDetail.tenantPhone || '未填写'}}
+            </text>
+            <text class="action-link" wx:if="{{roomDetail.tenantPhone}}" bindtap="makePhoneCall">拨打</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="label">入住时间</text>
+          <text class="value">{{m1.formatDate(roomDetail.rentStartDate)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 水电信息 -->
+    <view class="info-section">
+      <view class="section-header">
+        <text class="section-icon">💧</text>
+        <text class="section-title">水电信息</text>
+      </view>
+      <view class="info-card">
+        <view class="meter-info">
+          <view class="meter-row">
+            <text class="label">当前水表</text>
+            <view class="meter-value">
+              <text class="value">{{roomDetail.lastWaterReading || '--'}}吨</text>
+              <text class="date" wx:if="{{roomDetail.lastMeterReadingDate}}">{{m1.formatDate(roomDetail.lastMeterReadingDate)}}</text>
+            </view>
+          </view>
+          <view class="meter-row">
+            <text class="label">当前电表</text>
+            <view class="meter-value">
+              <text class="value">{{roomDetail.lastElectricityReading || '--'}}度</text>
+              <text class="date" wx:if="{{roomDetail.lastMeterReadingDate}}">{{m1.formatDate(roomDetail.lastMeterReadingDate)}}</text>
+            </view>
+          </view>
+          <view class="meter-row">
+            <text class="label">水费单价</text>
+            <text class="value">¥{{roomDetail.waterPrice || 0}}/吨</text>
+          </view>
+          <view class="meter-row">
+            <text class="label">电费单价</text>
+            <text class="value">¥{{roomDetail.electricityPrice || 0}}/度</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 费用配置 -->
+    <view class="info-section">
+      <view class="section-header">
+        <text class="section-icon">💰</text>
+        <text class="section-title">费用配置</text>
+      </view>
+      <view class="info-card">
+        <view class="info-row">
+          <text class="label">月租金</text>
+          <text class="value highlight">¥{{roomDetail.monthlyRent || 0}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">押金</text>
+          <text class="value">¥{{roomDetail.deposit || 0}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">管理费</text>
+          <text class="value">¥{{roomDetail.managementFee || 0}}/月</text>
+        </view>
+        <view class="info-row">
+          <text class="label">卫生费</text>
+          <text class="value">¥{{roomDetail.sanitationFee || 0}}/月</text>
+        </view>
+        <view class="info-row">
+          <text class="label">网费</text>
+          <text class="value">¥{{roomDetail.internetFee || 0}}/月</text>
+        </view>
+        <view class="info-row">
+          <text class="label">其他费用</text>
+          <text class="value">¥{{roomDetail.otherFee || 0}}/月</text>
+        </view>
+        <view class="info-row" wx:if="{{roomDetail.remarks}}">
+          <text class="label">费用备注</text>
+          <text class="value">{{roomDetail.remarks}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="footer-actions">
+      <!-- 动态主要操作按钮 -->
+      <button 
+        class="main-action-btn {{m1.getMainActionButton(roomDetail).type}}" 
+        bindtap="handleMainAction"
+        wx:if="{{m1.getMainActionButton(roomDetail)}}">
+        {{m1.getMainActionButton(roomDetail).text}}
+      </button>
+      
+      <!-- 次要操作按钮 -->
+      <view class="secondary-actions">
+        <button class="secondary-btn" bindtap="editRoom">
+          <text class="btn-icon">⚙️</text>
+          <text class="btn-text">修改信息</text>
+        </button>
+        <button class="secondary-btn" bindtap="viewMeterHistory" wx:if="{{roomDetail.status === 2}}">
+          <text class="btn-icon">📊</text>
+          <text class="btn-text">抄表记录</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<wxs module="m1">
+function getRoomStatusText(status) {
+  switch (status) {
+    case 1: return '未登记';
+    case 2: return '已出租';
+    case 3: return '维修中';
+    default: return '未知';
+  }
+}
+
+function getRoomStatusIcon(status) {
+  switch (status) {
+    case 1: return '🟡';
+    case 2: return '🟢';
+    case 3: return '🔧';
+    default: return '❓';
+  }
+}
+
+function getMainActionButton(roomDetail) {
+  if (!roomDetail) return null;
+  
+  switch (roomDetail.status) {
+    case 1: // 未登记
+      return {
+        text: '出租登记',
+        type: 'primary',
+        action: 'rentRegister'
+      };
+    case 2: // 已出租
+      return {
+        text: '退租登记',
+        type: 'danger', 
+        action: 'checkoutRegister'
+      };
+    case 3: // 维修中
+      return {
+        text: '完成维修',
+        type: 'success',
+        action: 'finishMaintenance'
+      };
+    default:
+      return null;
+  }
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '--';
+  var date = getDate(dateStr);
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  var day = date.getDate();
+  return year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+}
+
+module.exports = {
+  getRoomStatusText: getRoomStatusText,
+  getRoomStatusIcon: getRoomStatusIcon,
+  getMainActionButton: getMainActionButton,
+  formatDate: formatDate
+};
+</wxs>

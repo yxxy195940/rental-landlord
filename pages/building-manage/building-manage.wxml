@@ -1,0 +1,74 @@
+<!--pages/building-manage/building-manage.wxml-->
+<view class="page">
+  <scroll-view scroll-y class="building-list-scroll">
+    <view class="building-list">
+      <view 
+        class="building-card-wrapper {{deleteMode ? 'delete-mode' : ''}}" 
+        wx:for="{{buildings}}" 
+        wx:key="id"
+      >
+        <checkbox-group wx:if="{{deleteMode}}" bindchange="onCheckboxChange" data-id="{{item.id}}">
+          <checkbox class="building-checkbox" value="{{item.id}}" checked="{{item.checked}}"></checkbox>
+        </checkbox-group>
+        <view class="building-card" bindtap="onEditBuilding" data-id="{{item.id}}">
+          <view class="building-info">
+            <text class="building-name">{{item.name}}</text>
+            <text class="building-details">地址: {{item.address || '未填写'}}</text>
+            <text class="building-details">层数: {{item.floors || '未填写'}}</text>
+          </view>
+          <image class="edit-icon" src="/images/edit.svg" />
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{buildings.length === 0}}" class="empty-list">
+      <text>暂无楼栋信息</text>
+    </view>
+  </scroll-view>
+
+  <view class="footer-actions">
+    <block wx:if="{{deleteMode}}">
+      <button class="action-btn cancel-btn" bindtap="onCancelDelete">取消</button>
+      <button class="action-btn confirm-btn" bindtap="onConfirmDelete" disabled="{{selectedBuildings.length === 0}}">确认删除</button>
+    </block>
+    <block wx:else>
+      <button class="action-btn" bindtap="onDeleteBuilding">删除楼栋</button>
+      <button class="action-btn primary-btn" bindtap="onAddBuilding">添加楼栋</button>
+    </block>
+  </view>
+
+  <!-- 添加/编辑楼栋弹窗 -->
+  <van-dialog
+    use-slot
+    title="{{dialogTitle}}"
+    show="{{showDialog}}"
+    show-cancel-button
+    bind:confirm="onDialogConfirm"
+    bind:close="onDialogClose"
+  >
+    <view class="dialog-content">
+      <van-field
+        label="楼栋名称"
+        value="{{buildingForm.name}}"
+        bind:input="onFormInput"
+        data-field="name"
+        placeholder="请输入楼栋名称"
+        required
+      />
+      <van-field
+        label="地址"
+        value="{{buildingForm.address}}"
+        bind:input="onFormInput"
+        data-field="address"
+        placeholder="请输入地址"
+      />
+      <van-field
+        label="层数"
+        type="number"
+        value="{{buildingForm.floors}}"
+        bind:input="onFormInput"
+        data-field="floors"
+        placeholder="请输入层数"
+      />
+    </view>
+  </van-dialog>
+</view>

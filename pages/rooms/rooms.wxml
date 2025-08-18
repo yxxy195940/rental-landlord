@@ -1,0 +1,73 @@
+<!--pages/rooms/rooms.wxml-->
+<view class="page">
+  <!-- 新增的楼栋管理模块 -->
+  <view class="building-header">
+    <picker class="building-picker" bindchange="onBuildingChange" value="{{buildingIndex}}" range="{{buildings}}" range-key="name">
+      <view class="building-selector">
+        <text class="building-name">{{buildings[buildingIndex].name}}</text>
+        <image class="dropdown-icon" src="/images/arrow-down.svg"></image>
+      </view>
+    </picker>
+    <view class="building-manage" bindtap="goToBuildingManage">
+      <image class="manage-icon" src="/images/setting.svg"></image>
+      <text class="manage-text">楼栋管理</text>
+    </view>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="search-container">
+    <input class="search-input" placeholder="🔍 搜索房间号" bindinput="onSearchInput" />
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-container">
+    <text>总房间: {{rooms.length}}</text>
+    <text>已租: {{rentedCount}}</text>
+    <text>空置: {{vacantCount}}</text>
+  </view>
+
+  <!-- 房间列表 -->
+  <scroll-view scroll-y class="room-list-scroll">
+    <view class="room-list">
+      <view 
+        class="room-card-wrapper {{deleteMode ? 'delete-mode' : ''}}" 
+        wx:for="{{filteredRooms}}" 
+        wx:key="_id"
+        bindtap="navigateToRoomDetail"
+        data-id="{{item._id}}"
+      >
+        <checkbox-group wx:if="{{deleteMode}}" bindchange="onCheckboxChange" data-id="{{item._id}}">
+          <checkbox class="room-checkbox" value="{{item._id}}" checked="{{item.checked}}"></checkbox>
+        </checkbox-group>
+        <view class="room-card">
+          <view class="room-card-header">
+            <view class="room-name-status">
+              <text class="room-name">{{item.roomName}}室</text>
+              <text class="room-status status-{{item.status === 1 ? 'vacant' : 'rented'}}">{{item.status === 1 ? '空置' : '已出租'}}</text>
+            </view>
+            <text class="room-rent">{{item.monthlyRent}}元/月</text>
+          </view>
+          <view class="room-card-body">
+            <text class="tenant-info">租客: {{item.tenantName || '未登记'}}</text>
+            <text class="tenant-info">📱 {{item.tenantPhone || '未登记'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{filteredRooms.length === 0}}" class="empty-list">
+      <text>没有找到房间</text>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作按钮 -->
+  <view class="footer-actions">
+    <block wx:if="{{deleteMode}}">
+      <button class="action-btn cancel-btn" bindtap="onCancelDelete">取消</button>
+      <button class="action-btn confirm-btn" bindtap="onConfirmDelete" disabled="{{selectedRooms.length === 0}}">确认删除</button>
+    </block>
+    <block wx:else>
+      <button class="action-btn" bindtap="onDeleteRooms">删除房间</button>
+      <button class="action-btn primary-btn" bindtap="onAddRoom">添加房间</button>
+    </block>
+  </view>
+</view>

@@ -1,0 +1,215 @@
+<!--pages/rooms/rooms.wxml-->
+<!--房间列表页面-->
+<view class="container">
+  <!-- 顶部搜索栏 -->
+  <view class="search-container">
+    <van-search
+      value="{{ searchKeyword }}"
+      placeholder="搜索房间号、租客姓名"
+      use-action-slot
+      bind:change="onSearchChange"
+      bind:search="onSearch"
+      bind:clear="onSearchClear"
+    >
+      <view slot="action" bind:tap="onSearch">搜索</view>
+    </van-search>
+  </view>
+
+  <!-- 筛选标签 -->
+  <view class="filter-container">
+    <van-tabs 
+      active="{{ activeFilter }}" 
+      bind:change="onFilterChange"
+      sticky
+      offset-top="0"
+      swipe-threshold="4"
+    >
+      <van-tab title="全部({{filterCounts.all}})" name="all"></van-tab>
+      <van-tab title="已租({{filterCounts.rented}})" name="rented"></van-tab>
+      <van-tab title="空置({{filterCounts.vacant}})" name="vacant"></van-tab>
+      <van-tab title="维修({{filterCounts.maintenance}})" name="maintenance"></van-tab>
+    </van-tabs>
+  </view>
+
+  <!-- 房间列表 -->
+  <view class="room-list">
+    <view 
+      class="room-card"
+      wx:for="{{ filteredRooms }}" 
+      wx:key="id"
+      bind:tap="goToRoomDetail"
+      data-room-id="{{ item.id }}"
+    >
+      <!-- 房间基本信息 -->
+      <view class="room-header">
+        <view class="room-number">{{ item.roomNumber }}</view>
+        <van-tag 
+          type="{{ getRoomStatusTagType(item.status) }}"
+          size="medium"
+        >
+          {{ getRoomStatusText(item.status) }}
+        </van-tag>
+      </view>
+
+      <!-- 房间详情 -->
+      <view class="room-content">
+        <view class="room-info">
+          <view class="info-item">
+            <van-icon name="location-o" size="16px" />
+            <text class="info-text">{{ item.location || '暂无地址' }}</text>
+          </view>
+          <view class="info-item">
+            <van-icon name="gold-coin-o" size="16px" />
+            <text class="info-text">月租金: {{ formatMoney(item.monthlyRent) }}</text>
+          </view>
+          <view class="info-item" wx:if="{{ item.tenantName }}">
+            <van-icon name="contact" size="16px" />
+            <text class="info-text">租客: {{ item.tenantName }}</text>
+          </view>
+          <view class="info-item" wx:if="{{ item.contractEndDate }}">
+            <van-icon name="calendar-o" size="16px" />
+            <text class="info-text">到期: {{ formatDate(item.contractEndDate) }}</text>
+          </view>
+        </view>
+
+        <!-- 快速操作 -->
+        <view class="room-actions">
+          <van-button 
+            wx:if="{{ item.status === 0 }}"
+            size="small" 
+            type="primary"
+            bind:tap="quickRent"
+            data-room-id="{{ item.id }}"
+          >
+            快速出租
+          </van-button>
+          <van-button 
+            wx:elif="{{ item.status === 1 }}"
+            size="small" 
+            type="default"
+            bind:tap="collectRent"
+            data-room-id="{{ item.id }}"
+          >
+            收租
+          </van-button>
+          <van-button 
+            size="small" 
+            type="default"
+            bind:tap="meterReading"
+            data-room-id="{{ item.id }}"
+          >
+            抄表
+          </van-button>
+        </view>
+      </view>
+
+      <!-- 房间状态指示器 -->
+      <view class="room-indicator">
+        <view class="indicator-dot {{ getStatusClass(item.status) }}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:if="{{ !filteredRooms.length && !loading }}">
+    <van-empty 
+      description="{{ getEmptyDescription() }}"
+      image="search"
+    >
+      <van-button 
+        round 
+        type="primary" 
+        size="small"
+        bind:tap="resetFilter"
+        wx:if="{{ activeFilter !== 'all' }}"
+      >
+        查看全部房间
+      </van-button>
+    </van-empty>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{ loading }}">
+    <van-loading type="spinner" size="24px" />
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>
+
+<!-- 底部操作栏 -->
+<view class="bottom-actions safe-area-bottom">
+  <van-button 
+    type="primary" 
+    size="large"
+    bind:tap="addRoom"
+    icon="plus"
+  >
+    添加房间
+  </van-button>
+</view>
+
+<!-- 快速操作弹窗 -->
+<van-popup
+  show="{{ showQuickActions }}"
+  position="bottom"
+  bind:close="closeQuickActions"
+  round
+  closeable
+>
+  <view class="quick-actions-popup">
+    <view class="popup-title">房间 {{ selectedRoom.roomNumber }} 操作</view>
+    <view class="action-list">
+      <view class="action-item" bind:tap="goToRoomDetail">
+        <van-icon name="home-o" size="20px" />
+        <text>房间详情</text>
+      </view>
+      <view class="action-item" bind:tap="editRoom">
+        <van-icon name="edit" size="20px" />
+        <text>编辑房间</text>
+      </view>
+      <view class="action-item" bind:tap="quickRent" wx:if="{{ selectedRoom.status === 0 }}">
+        <van-icon name="plus" size="20px" />
+        <text>快速出租</text>
+      </view>
+      <view class="action-item" bind:tap="collectRent" wx:if="{{ selectedRoom.status === 1 }}">
+        <van-icon name="bill-o" size="20px" />
+        <text>收租记录</text>
+      </view>
+      <view class="action-item" bind:tap="meterReading">
+        <van-icon name="edit" size="20px" />
+        <text>抄表录入</text>
+      </view>
+      <view class="action-item danger" bind:tap="deleteRoom">
+        <van-icon name="delete" size="20px" />
+        <text>删除房间</text>
+      </view>
+    </view>
+  </view>
+</van-popup>
+
+<!-- 确认删除弹窗 -->
+<van-dialog
+  use-slot
+  show="{{ showDeleteDialog }}"
+  title="确认删除"
+  show-cancel-button
+  bind:confirm="confirmDelete"
+  bind:cancel="cancelDelete"
+>
+  <view class="delete-dialog-content">
+    <text>确定要删除房间 {{ selectedRoom.roomNumber }} 吗？</text>
+    <text class="warning-text">删除后无法恢复，请谨慎操作。</text>
+  </view>
+</van-dialog>
+
+<!-- Toast提示 -->
+<van-toast id="van-toast" />
+
+<!-- 加载提示 -->
+<van-loading 
+  wx:if="{{ globalLoading }}" 
+  type="spinner" 
+  color="#1989fa"
+  vertical
+>
+  加载中...
+</van-loading>

@@ -1,0 +1,437 @@
+/* pages/checkout-register/checkout-register.wxss */
+.page {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200rpx;
+  color: #666;
+}
+
+.content {
+  padding: 32rpx;
+}
+
+/* 表单区域 */
+.form-section {
+  margin-bottom: 32rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  gap: 8rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-subtitle {
+  font-size: 24rpx;
+  color: #666;
+  margin-left: auto;
+}
+
+/* 信息展示卡片 */
+.info-card {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* 表单卡片 */
+.form-card {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.form-row {
+  margin-bottom: 32rpx;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.label.required::after {
+  content: '*';
+  color: #ff4757;
+  margin-left: 4rpx;
+}
+
+.value {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.input {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #1989fa;
+  background-color: white;
+}
+
+.input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.input-with-unit .input {
+  flex: 1;
+}
+
+.unit {
+  font-size: 24rpx;
+  color: #666;
+  white-space: nowrap;
+}
+
+.textarea {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  min-height: 120rpx;
+  transition: border-color 0.2s ease;
+}
+
+.textarea:focus {
+  border-color: #1989fa;
+  background-color: white;
+}
+
+.picker-display {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.picker-display.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.error-text {
+  font-size: 24rpx;
+  color: #ff4757;
+  margin-top: 8rpx;
+}
+
+/* 水电表对比 */
+.meter-compare {
+  margin-bottom: 24rpx;
+}
+
+.meter-compare:last-child {
+  margin-bottom: 0;
+}
+
+.compare-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.compare-label {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.compare-values {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.compare-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.compare-title {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.compare-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  padding: 16rpx;
+  background-color: #f8f9fa;
+  border-radius: 8rpx;
+  text-align: center;
+  min-width: 120rpx;
+}
+
+.compare-input {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+  text-align: center;
+  min-width: 120rpx;
+}
+
+.compare-input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.compare-unit {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #666;
+  padding: 0 8rpx;
+}
+
+/* 费用结算 */
+.settlement-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: linear-gradient(135deg, #e8f5e8, #f0f8ff);
+  border-radius: 12rpx;
+  border: 2rpx solid #4caf50;
+}
+
+.settlement-label {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.settlement-amount {
+  font-size: 32rpx;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+/* 警告卡片 */
+.warning-card {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-top: 32rpx;
+  border: 2rpx solid #ffc107;
+}
+
+.warning-icon {
+  font-size: 32rpx;
+  margin-top: 4rpx;
+}
+
+.warning-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.warning-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.warning-item {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 底部操作按钮 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #e9ecef;
+  display: flex;
+  gap: 16rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.cancel-btn {
+  flex: 1;
+  background-color: #f8f9fa;
+  color: #666;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.cancel-btn:active {
+  background-color: #e9ecef;
+}
+
+.confirm-btn {
+  flex: 2;
+  background-color: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.confirm-btn:active {
+  background-color: #ff3742;
+}
+
+.confirm-btn.disabled {
+  background-color: #ccc;
+  color: #999;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .content {
+    padding: 24rpx;
+  }
+  
+  .form-card,
+  .info-card {
+    padding: 20rpx;
+  }
+  
+  .compare-values {
+    gap: 12rpx;
+  }
+  
+  .compare-value,
+  .compare-input {
+    min-width: 100rpx;
+    padding: 12rpx;
+  }
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background-color: #1a1a1a;
+  }
+  
+  .form-card,
+  .info-card {
+    background-color: #2d2d2d;
+  }
+  
+  .label,
+  .section-title {
+    color: #fff;
+  }
+  
+  .value {
+    color: #cbd5e0;
+  }
+  
+  .input,
+  .textarea,
+  .picker-display,
+  .compare-input {
+    background-color: #404040;
+    border-color: #555;
+    color: #fff;
+  }
+  
+  .compare-value {
+    background-color: #404040;
+    color: #fff;
+  }
+  
+  .warning-card {
+    background: linear-gradient(135deg, #4a5568, #2d3748);
+    border-color: #ecc94b;
+  }
+  
+  .warning-title {
+    color: #fff;
+  }
+  
+  .warning-item {
+    color: #cbd5e0;
+  }
+}

@@ -1,0 +1,354 @@
+/* pages/roomDetail/roomDetail.wxss */
+.page {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+  padding-bottom: 180rpx; /* 增加底部间距，确保内容不被按钮遮挡 */
+}
+
+.loading-state, .error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 400rpx;
+  color: #969799;
+}
+
+.error-state button {
+  margin-top: 32rpx;
+  padding: 16rpx 32rpx;
+  background-color: #1989fa;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+}
+
+.content {
+  padding: 32rpx;
+}
+
+/* 信息区域 */
+.info-section {
+  margin-bottom: 32rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+  padding: 0 8rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+}
+
+.header-action {
+  font-size: 24rpx;
+  color: #1989fa;
+  padding: 8rpx 16rpx;
+  background: rgba(25, 137, 250, 0.1);
+  border-radius: 8rpx;
+  border: 1rpx solid rgba(25, 137, 250, 0.3);
+}
+
+/* 信息卡片 */
+.info-card {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 房间头部信息 */
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.room-number {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.status-badge.status-1 {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #b8860b;
+  border: 1rpx solid #ffc107;
+}
+
+.status-badge.status-2 {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+  border: 1rpx solid #28a745;
+}
+
+.status-badge.status-3 {
+  background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+  color: #721c24;
+  border: 1rpx solid #dc3545;
+}
+
+.status-icon {
+  font-size: 24rpx;
+}
+
+.status-text {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+/* 信息网格 */
+.info-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 32rpx;
+}
+
+.info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.info-item .label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.info-item .value {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.info-item .value.highlight {
+  color: #1989fa;
+  font-weight: 600;
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-row .label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.info-row .value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.info-row .value.placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.value-with-action {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.action-link {
+  font-size: 24rpx;
+  color: #1989fa;
+  padding: 8rpx 16rpx;
+  background: rgba(25, 137, 250, 0.1);
+  border-radius: 8rpx;
+  border: 1rpx solid rgba(25, 137, 250, 0.3);
+}
+
+/* 水电信息 */
+.meter-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.meter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.meter-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.meter-value .value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.meter-value .date {
+  font-size: 20rpx;
+  color: #999;
+}
+
+/* 底部操作按钮 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  border-top: 1rpx solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 主要操作按钮 */
+.main-action-btn {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.main-action-btn.primary {
+  background: linear-gradient(135deg, #1989fa, #1976d2);
+  color: white;
+}
+
+.main-action-btn.danger {
+  background: linear-gradient(135deg, #ff4757, #ff3742);
+  color: white;
+}
+
+.main-action-btn.success {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+}
+
+/* 次要操作按钮 */
+.secondary-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.secondary-btn {
+  flex: 1;
+  height: 72rpx;
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.secondary-btn:active {
+  background-color: #e9ecef;
+}
+
+.btn-icon {
+  font-size: 28rpx;
+}
+
+.btn-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .content {
+    padding: 24rpx;
+  }
+  
+  .info-card {
+    padding: 24rpx;
+  }
+  
+  .room-number {
+    font-size: 40rpx;
+  }
+  
+  .info-grid {
+    gap: 20rpx;
+  }
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background-color: #1a1a1a;
+  }
+  
+  .info-card {
+    background-color: #2d2d2d;
+  }
+  
+  .section-title,
+  .room-number,
+  .info-row .value {
+    color: #fff;
+  }
+  
+  .info-row .label {
+    color: #cbd5e0;
+  }
+  
+  .secondary-btn {
+    background-color: #404040;
+    border-color: #555;
+    color: #cbd5e0;
+  }
+}

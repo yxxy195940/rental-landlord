@@ -1,0 +1,307 @@
+/* pages/test-cloud/test-cloud.wxss */
+
+.container {
+  padding: 32rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* 标题区域 */
+.header {
+  text-align: center;
+  margin-bottom: 40rpx;
+  padding: 40rpx 32rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16rpx;
+  color: white;
+}
+
+.title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.subtitle {
+  display: block;
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+/* 测试区域 */
+.test-section {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+}
+
+.test-button {
+  padding: 24rpx 16rpx;
+  border-radius: 12rpx;
+  border: none;
+  font-size: 28rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.test-button.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.test-button.success {
+  background-color: #28a745;
+  color: white;
+}
+
+.test-button.warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.test-button.info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.test-button.danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.test-button.clear {
+  background-color: #6c757d;
+  color: white;
+}
+
+.test-button:disabled {
+  opacity: 0.6;
+  transform: none !important;
+}
+
+.test-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* 批量测试 */
+.batch-test {
+  margin-bottom: 40rpx;
+}
+
+.run-all-button {
+  width: 100%;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border: none;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.run-all-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.run-all-button:disabled {
+  opacity: 0.6;
+}
+
+/* 结果区域 */
+.results-section {
+  margin-bottom: 40rpx;
+}
+
+.result-list {
+  space-y: 16rpx;
+}
+
+.result-item {
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  border-left: 8rpx solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.result-item.success {
+  border-left-color: #28a745;
+}
+
+.result-item.error {
+  border-left-color: #dc3545;
+}
+
+.result-item:active {
+  transform: scale(0.98);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.result-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.result-time {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.result-status {
+  font-size: 32rpx;
+}
+
+.result-content {
+  background-color: #f8f9fa;
+  border-radius: 8rpx;
+  padding: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.result-text {
+  font-size: 24rpx;
+  color: #666;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.result-tip {
+  text-align: center;
+  padding: 8rpx;
+}
+
+.result-tip text {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80rpx 32rpx;
+  color: #666;
+}
+
+.empty-icon {
+  display: block;
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+  color: #333;
+}
+
+.empty-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 加载状态 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  background-color: white;
+  padding: 40rpx;
+  border-radius: 16rpx;
+  text-align: center;
+  min-width: 200rpx;
+}
+
+.loading-icon {
+  display: block;
+  font-size: 60rpx;
+  margin-bottom: 16rpx;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 帮助说明 */
+.help-section {
+  background-color: white;
+  border-radius: 12rpx;
+  padding: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.help-list {
+  margin-top: 16rpx;
+}
+
+.help-item {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  line-height: 2;
+  margin-bottom: 8rpx;
+}
+
+/* 响应式 */
+@media (max-width: 375px) {
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8rpx;
+  }
+}

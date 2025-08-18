@@ -1,0 +1,135 @@
+<!--pages/billDetail/billDetail.wxml-->
+<view class="page">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 账单详情 -->
+  <view wx:else class="bill-detail-container">
+    <view wx:if="{{billDetail}}" class="bill-content">
+      <!-- 头部信息 -->
+      <view class="header-section">
+        <view class="bill-title">{{billDetail.buildingName}} {{billDetail.roomNumber}}房账单</view>
+        <view class="bill-no">账单编号: {{billDetail.billNo}}</view>
+        <view class="status-badge {{billDetail.status === 2 ? 'paid' : 'unpaid'}}">
+          {{billDetail.statusText}}
+        </view>
+      </view>
+
+      <!-- 费用明细 -->
+      <view class="fees-section">
+        <view class="section-title">费用明细</view>
+
+        <!-- 房租 -->
+        <view class="fee-item">
+          <view class="fee-info">
+            <text class="fee-name">房租</text>
+          </view>
+          <text class="fee-amount">¥{{billDetail.rentAmount}}</text>
+        </view>
+
+        <!-- 水费 -->
+        <view class="fee-item">
+          <view class="fee-info">
+            <text class="fee-name">水费</text>
+            <text class="fee-usage">{{billDetail.waterUsage}}吨 × ¥{{billDetail.waterPrice}}/吨</text>
+          </view>
+          <text class="fee-amount">¥{{billDetail.waterAmount}}</text>
+        </view>
+
+        <!-- 电费 -->
+        <view class="fee-item">
+          <view class="fee-info">
+            <text class="fee-name">电费</text>
+            <text class="fee-usage">{{billDetail.electricityUsage}}度 × ¥{{billDetail.electricityPrice}}/度</text>
+          </view>
+          <text class="fee-amount">¥{{billDetail.electricityAmount}}</text>
+        </view>
+
+        <!-- 清洁费 -->
+        <view wx:if="{{billDetail.cleaningAmount > 0}}" class="fee-item">
+          <view class="fee-info">
+            <text class="fee-name">清洁费</text>
+          </view>
+          <text class="fee-amount">¥{{billDetail.cleaningAmount}}</text>
+        </view>
+
+        <!-- 总计 -->
+        <view class="total-section">
+          <view class="total-row">
+            <text class="total-label">总金额</text>
+            <text class="total-amount">¥{{billDetail.totalAmount}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 房间信息 -->
+      <view class="info-section">
+        <view class="section-title">房间信息</view>
+        <view class="info-row">
+          <text class="label">房间:</text>
+          <text class="value">{{billDetail.buildingName}} {{billDetail.roomNumber}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">租客:</text>
+          <text class="value">{{billDetail.tenantName || '未设置'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">账单月份:</text>
+          <text class="value">{{billDetail.billMonth}}</text>
+        </view>
+      </view>
+      <!-- 抄表信息 -->
+      <view wx:if="{{billDetail.meterRecord}}" class="meter-section">
+        <view class="section-title">抄表信息</view>
+        <view class="info-row">
+          <text class="label">水表读数:</text>
+          <text class="value">{{billDetail.meterRecord.waterReading}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">电表读数:</text>
+          <text class="value">{{billDetail.meterRecord.electricityReading}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">抄表日期:</text>
+          <text class="value">{{billDetail.meterRecord.recordDate}}</text>
+        </view>
+      </view>
+
+      <!-- 支付信息 -->
+      <view wx:if="{{billDetail.status === 2}}" class="payment-section">
+        <view class="section-title">支付信息</view>
+        <view class="info-row">
+          <text class="label">实收金额:</text>
+          <text class="value paid-amount">¥{{billDetail.paidAmount}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">收款日期:</text>
+          <text class="value">{{billDetail.paidAt}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="actions-section">
+        <button wx:if="{{billDetail.status !== 2}}" class="action-btn primary" bindtap="markBillPaid">
+          标记收款
+        </button>
+        <button class="action-btn secondary" bindtap="generateBillImage">
+          生成图片
+        </button>
+        <button class="action-btn secondary" bindtap="shareImage">
+          分享账单
+        </button>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:else class="empty-state">
+      <text class="empty-text">账单不存在</text>
+    </view>
+  </view>
+
+  <!-- 隐藏的Canvas用于生成图片 -->
+  <canvas canvas-id="billCanvas" style="width: 375px; height: 600px; position: fixed; top: -1000px; left: -1000px;"></canvas>
+</view>

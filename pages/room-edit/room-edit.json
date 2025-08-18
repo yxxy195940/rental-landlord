@@ -1,0 +1,8 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "房间编辑",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#1989fa",
+  "enablePullDownRefresh": false,
+  "backgroundTextStyle": "dark"
+}

@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "navigationBarTitleText": "房租管理",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#1989fa"
+}

@@ -1,0 +1,102 @@
+<!--pages/test-cloud/test-cloud.wxml-->
+<view class="container">
+  <!-- 标题 -->
+  <view class="header">
+    <text class="title">🧪 云函数测试中心</text>
+    <text class="subtitle">测试各种云函数调用功能</text>
+  </view>
+
+  <!-- 测试按钮区域 -->
+  <view class="test-section">
+    <view class="section-title">📋 单项测试</view>
+    
+    <view class="button-grid">
+      <button class="test-button primary" bindtap="testGetRoomList" disabled="{{loading}}">
+        📋 获取房间列表
+      </button>
+      
+      <button class="test-button success" bindtap="testAddRoom" disabled="{{loading}}">
+        ➕ 添加测试房间
+      </button>
+      
+      <button class="test-button warning" bindtap="testDatabase" disabled="{{loading}}">
+        🗃️ 数据库查询
+      </button>
+      
+      <button class="test-button info" bindtap="testUserContext" disabled="{{loading}}">
+        👤 用户身份
+      </button>
+      
+      <button class="test-button danger" bindtap="testErrorHandling" disabled="{{loading}}">
+        ❌ 错误处理
+      </button>
+      
+      <button class="test-button clear" bindtap="clearResults" disabled="{{loading}}">
+        🗑️ 清空结果
+      </button>
+    </view>
+  </view>
+
+  <!-- 批量测试 -->
+  <view class="batch-test">
+    <button class="run-all-button" bindtap="runAllTests" disabled="{{loading}}">
+      🚀 运行所有测试
+    </button>
+  </view>
+
+  <!-- 测试结果区域 -->
+  <view class="results-section" wx:if="{{testResults.length > 0}}">
+    <view class="section-title">📊 测试结果 ({{testResults.length}})</view>
+    
+    <view class="result-list">
+      <view 
+        class="result-item {{item.success ? 'success' : 'error'}}" 
+        wx:for="{{testResults}}" 
+        wx:key="id"
+        bindtap="copyResult"
+        data-index="{{index}}"
+      >
+        <view class="result-header">
+          <text class="result-title">{{item.title}}</text>
+          <text class="result-time">{{item.time}}</text>
+          <text class="result-status">{{item.success ? '✅' : '❌'}}</text>
+        </view>
+        
+        <view class="result-content">
+          <text class="result-text">{{item.result}}</text>
+        </view>
+        
+        <view class="result-tip">
+          <text>点击复制结果</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{testResults.length === 0}}">
+    <text class="empty-icon">🔬</text>
+    <text class="empty-text">点击上方按钮开始测试</text>
+    <text class="empty-desc">建议先运行"数据库查询"测试基础功能</text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <text class="loading-icon">⏳</text>
+      <text class="loading-text">测试中...</text>
+    </view>
+  </view>
+</view>
+
+<!-- 使用说明 -->
+<view class="help-section">
+  <view class="section-title">💡 使用说明</view>
+  <view class="help-list">
+    <text class="help-item">• 确保已开通云开发并创建了 rooms 集合</text>
+    <text class="help-item">• 确保云函数 room 已上传到云端</text>
+    <text class="help-item">• 建议按顺序测试：数据库 → 房间列表 → 添加房间</text>
+    <text class="help-item">• 点击测试结果可以复制详细信息</text>
+    <text class="help-item">• 如果测试失败，请检查控制台日志</text>
+  </view>
+</view>

@@ -1,0 +1,563 @@
+/* pages/meter-init/meter-init.wxss */
+.page {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200rpx;
+  color: #666;
+}
+
+.content {
+  padding: 32rpx;
+}
+
+/* 统计信息卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #1989fa, #1976d2);
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  color: white;
+  box-shadow: 0 4rpx 12rpx rgba(25, 137, 250, 0.3);
+}
+
+.stats-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 24rpx;
+}
+
+.building-name {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.stats-subtitle {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.stat-value.highlight {
+  color: #ffd93d;
+}
+
+.stat-value.selected {
+  color: #4caf50;
+}
+
+/* 模式切换 */
+.mode-section {
+  margin-bottom: 32rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  gap: 8rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 16rpx;
+}
+
+.mode-option {
+  flex: 1;
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  border: 2rpx solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  transition: all 0.3s ease;
+}
+
+.mode-option.active {
+  border-color: #1989fa;
+  background: linear-gradient(135deg, #e8f4fd, #f0f8ff);
+}
+
+.mode-icon {
+  font-size: 32rpx;
+  margin-bottom: 4rpx;
+}
+
+.mode-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.mode-desc {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+}
+
+/* 表单区域 */
+.form-section {
+  margin-bottom: 32rpx;
+}
+
+.form-card {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.form-row {
+  margin-bottom: 32rpx;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.label.required::after {
+  content: '*';
+  color: #ff4757;
+  margin-left: 4rpx;
+}
+
+.input {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #1989fa;
+  background-color: white;
+}
+
+.input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.input-with-unit .input {
+  flex: 1;
+}
+
+.unit {
+  font-size: 24rpx;
+  color: #666;
+  white-space: nowrap;
+}
+
+.picker-display {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.picker-display.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.error-text {
+  font-size: 24rpx;
+  color: #ff4757;
+  margin-top: 8rpx;
+}
+
+/* 房间选择区域 */
+.room-section {
+  margin-bottom: 32rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  font-size: 24rpx;
+  color: #1989fa;
+  padding: 8rpx 16rpx;
+  background-color: rgba(25, 137, 250, 0.1);
+  border-radius: 8rpx;
+  border: 1rpx solid rgba(25, 137, 250, 0.3);
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.room-item {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  border: 2rpx solid transparent;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.room-item.selected {
+  border-color: #1989fa;
+  background: linear-gradient(135deg, #e8f4fd, #f0f8ff);
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.room-basic {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.room-number {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.room-status {
+  font-size: 24rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  background-color: #f8f9fa;
+  color: #666;
+}
+
+.room-status.vacant {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.room-status.rented {
+  background-color: #cce5ff;
+  color: #0066cc;
+}
+
+.check-icon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 2rpx solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  transition: all 0.3s ease;
+}
+
+.check-icon.checked {
+  background-color: #1989fa;
+  color: white;
+  border-color: #1989fa;
+}
+
+.meter-info {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.meter-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.meter-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.meter-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.meter-unit {
+  font-size: 20rpx;
+  color: #999;
+}
+
+/* 单独录入输入框 */
+.individual-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  padding: 16rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.input-label {
+  font-size: 24rpx;
+  color: #333;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.mini-input {
+  flex: 1;
+  background-color: white;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 16rpx;
+  font-size: 24rpx;
+  color: #333;
+}
+
+.mini-input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.input-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.input-errors .error-text {
+  font-size: 20rpx;
+  margin-top: 0;
+}
+
+/* 提示卡片 */
+.tips-card {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-top: 32rpx;
+  border: 2rpx solid #ffc107;
+}
+
+.tips-icon {
+  font-size: 32rpx;
+  margin-top: 4rpx;
+}
+
+.tips-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.tips-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.tips-item {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 底部操作按钮 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #e9ecef;
+  display: flex;
+  gap: 16rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.cancel-btn {
+  flex: 1;
+  background-color: #f8f9fa;
+  color: #666;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.cancel-btn:active {
+  background-color: #e9ecef;
+}
+
+.confirm-btn {
+  flex: 2;
+  background-color: #1989fa;
+  color: white;
+  border: none;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.confirm-btn:active {
+  background-color: #1976d2;
+}
+
+.confirm-btn.disabled {
+  background-color: #ccc;
+  color: #999;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .content {
+    padding: 24rpx;
+  }
+  
+  .stats-card,
+  .form-card {
+    padding: 20rpx;
+  }
+  
+  .mode-toggle {
+    gap: 12rpx;
+  }
+  
+  .mode-option {
+    padding: 20rpx;
+  }
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background-color: #1a1a1a;
+  }
+  
+  .form-card,
+  .room-item {
+    background-color: #2d2d2d;
+  }
+  
+  .section-title,
+  .room-number,
+  .meter-value {
+    color: #fff;
+  }
+  
+  .input,
+  .picker-display,
+  .mini-input {
+    background-color: #404040;
+    border-color: #555;
+    color: #fff;
+  }
+  
+  .meter-info,
+  .individual-inputs {
+    background-color: #404040;
+  }
+  
+  .tips-card {
+    background: linear-gradient(135deg, #4a5568, #2d3748);
+    border-color: #ecc94b;
+  }
+  
+  .tips-title {
+    color: #fff;
+  }
+  
+  .tips-item {
+    color: #cbd5e0;
+  }
+}

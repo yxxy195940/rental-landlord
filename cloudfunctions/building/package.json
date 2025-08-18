@@ -1,0 +1,9 @@
+{
+  "name": "building",
+  "version": "1.0.0",
+  "description": "楼栋管理云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

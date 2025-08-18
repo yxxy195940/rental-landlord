@@ -1,0 +1,516 @@
+/* pages/batch-rent/batch-rent.wxss */
+
+/* 必填项红色星号样式 */
+.required {
+  color: #ff4444;
+  font-size: 28rpx;
+  margin-left: 4rpx;
+}
+.page {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+  color: #666;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 32rpx;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+  color: #666;
+}
+
+.empty-subtitle {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.content {
+  padding: 32rpx;
+}
+
+/* 统计信息卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #1989fa, #1976d2);
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  color: white;
+  box-shadow: 0 4rpx 12rpx rgba(25, 137, 250, 0.3);
+}
+
+.stats-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 24rpx;
+}
+
+.building-name {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.stats-subtitle {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.stat-value.selected {
+  color: #4caf50;
+}
+
+.expand-all-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  border-radius: 20rpx;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.select-all-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 房间区域 */
+.room-section {
+  margin-bottom: 32rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  gap: 8rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+/* 房间卡片 */
+.room-card {
+  background-color: white;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  border: 2rpx solid transparent;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.room-card.selected {
+  border-color: #1989fa;
+  background: linear-gradient(135deg, #e8f4fd, #f0f8ff);
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.room-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  flex: 1;
+  cursor: pointer;
+}
+
+.room-number {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.room-rent {
+  font-size: 24rpx;
+  color: #1989fa;
+  font-weight: 500;
+}
+
+.room-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.check-icon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 2rpx solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.check-icon:active {
+  transform: scale(0.95);
+  background-color: #f0f0f0;
+}
+
+.check-icon.checked {
+  background-color: #1989fa;
+  color: white;
+  border-color: #1989fa;
+}
+
+.check-icon.checked:active {
+  background-color: #1976d2;
+  transform: scale(0.95);
+}
+
+.expand-btn {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.expand-btn.expanded {
+  background-color: #1989fa;
+  color: white;
+}
+
+/* 房间表单 */
+.room-form {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.room-form.expanded {
+  max-height: 2000rpx;
+  padding: 24rpx;
+  padding-top: 0;
+}
+
+.form-group {
+  margin-bottom: 32rpx;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.group-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-input {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #1989fa;
+  background-color: white;
+}
+
+.form-input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.form-picker {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.form-picker.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.form-textarea {
+  background-color: #f8f9fa;
+  border: 2rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  color: #333;
+  min-height: 120rpx;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.input-with-unit .form-input {
+  flex: 1;
+}
+
+.unit {
+  font-size: 24rpx;
+  color: #666;
+  white-space: nowrap;
+}
+
+.meter-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.meter-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.error-text {
+  font-size: 22rpx;
+  color: #ff4757;
+  margin-top: 4rpx;
+}
+
+/* 提示卡片 */
+.tips-card {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-top: 32rpx;
+  border: 2rpx solid #ffc107;
+}
+
+.tips-icon {
+  font-size: 32rpx;
+  margin-top: 4rpx;
+}
+
+.tips-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.tips-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.tips-item {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 底部操作按钮 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #e9ecef;
+  display: flex;
+  gap: 16rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.cancel-btn {
+  flex: 1;
+  background-color: #f8f9fa;
+  color: #666;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.cancel-btn:active {
+  background-color: #e9ecef;
+}
+
+.confirm-btn {
+  flex: 2;
+  background-color: #1989fa;
+  color: white;
+  border: none;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.confirm-btn:active {
+  background-color: #1976d2;
+}
+
+.confirm-btn.disabled {
+  background-color: #ccc;
+  color: #999;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .content {
+    padding: 24rpx;
+  }
+  
+  .stats-card,
+  .room-header {
+    padding: 20rpx;
+  }
+  
+  .room-form.expanded {
+    padding: 20rpx;
+    padding-top: 0;
+  }
+  
+  .meter-row {
+    flex-direction: column;
+    gap: 12rpx;
+  }
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background-color: #1a1a1a;
+  }
+  
+  .room-card {
+    background-color: #2d2d2d;
+  }
+  
+  .section-title,
+  .room-number,
+  .group-title,
+  .form-label {
+    color: #fff;
+  }
+  
+  .form-input,
+  .form-picker,
+  .form-textarea {
+    background-color: #404040;
+    border-color: #555;
+    color: #fff;
+  }
+  
+  .tips-card {
+    background: linear-gradient(135deg, #4a5568, #2d3748);
+    border-color: #ecc94b;
+  }
+  
+  .tips-title {
+    color: #fff;
+  }
+  
+  .tips-item {
+    color: #cbd5e0;
+  }
+}

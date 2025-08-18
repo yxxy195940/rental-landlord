@@ -1,0 +1,234 @@
+<!--pages/checkout-register/checkout-register.wxml-->
+<view class="page">
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:else class="content">
+    <!-- 当前租客信息 -->
+    <view class="form-section" wx:if="{{roomInfo}}">
+      <view class="section-header">
+        <text class="section-icon">👤</text>
+        <text class="section-title">当前租客</text>
+      </view>
+      <view class="info-card">
+        <view class="info-row">
+          <text class="label">姓名</text>
+          <text class="value">{{roomInfo.tenantName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">手机号</text>
+          <text class="value">{{roomInfo.tenantPhone}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">入住时间</text>
+          <text class="value">{{roomInfo.rentStartDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 退租信息 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📅</text>
+        <text class="section-title">退租信息</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">退租日期</text>
+            <picker 
+              mode="date" 
+              value="{{checkoutDate}}"
+              data-field="checkoutDate"
+              bindchange="onDateChange">
+              <view class="picker-display {{errors.checkoutDate ? 'error' : ''}}">
+                {{checkoutDate || '请选择退租日期'}}
+              </view>
+            </picker>
+          </view>
+          <text class="error-text" wx:if="{{errors.checkoutDate}}">{{errors.checkoutDate}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">退租原因</text>
+            <picker 
+              value="{{reasonIndex}}"
+              range="{{reasonOptions}}"
+              bindchange="onReasonChange">
+              <view class="picker-display">
+                {{checkoutReason}}
+              </view>
+            </picker>
+          </view>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">备注说明</text>
+            <textarea 
+              class="textarea"
+              placeholder="退租相关说明（可选）"
+              value="{{remark}}"
+              data-field="remark"
+              bindinput="onInputChange"
+              maxlength="200"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 抄录最终表数 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">💧</text>
+        <text class="section-title">抄录最终表数</text>
+      </view>
+      <view class="form-card">
+        <view class="meter-compare">
+          <view class="compare-row">
+            <text class="compare-label">水表对比</text>
+            <view class="compare-values">
+              <view class="compare-item">
+                <text class="compare-title">当前</text>
+                <text class="compare-value">{{roomInfo.lastWaterReading || 0}}吨</text>
+              </view>
+              <text class="arrow">→</text>
+              <view class="compare-item">
+                <text class="compare-title">最终</text>
+                <input 
+                  class="compare-input {{errors.finalWaterReading ? 'error' : ''}}"
+                  placeholder="最终读数"
+                  value="{{finalWaterReading}}"
+                  data-field="finalWaterReading"
+                  bindinput="onInputChange"
+                  type="digit"
+                />
+                <text class="compare-unit">吨</text>
+              </view>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.finalWaterReading}}">{{errors.finalWaterReading}}</text>
+        </view>
+        
+        <view class="meter-compare">
+          <view class="compare-row">
+            <text class="compare-label">电表对比</text>
+            <view class="compare-values">
+              <view class="compare-item">
+                <text class="compare-title">当前</text>
+                <text class="compare-value">{{roomInfo.lastElectricityReading || 0}}度</text>
+              </view>
+              <text class="arrow">→</text>
+              <view class="compare-item">
+                <text class="compare-title">最终</text>
+                <input 
+                  class="compare-input {{errors.finalElectricityReading ? 'error' : ''}}"
+                  placeholder="最终读数"
+                  value="{{finalElectricityReading}}"
+                  data-field="finalElectricityReading"
+                  bindinput="onInputChange"
+                  type="digit"
+                />
+                <text class="compare-unit">度</text>
+              </view>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.finalElectricityReading}}">{{errors.finalElectricityReading}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">记录日期</text>
+            <picker 
+              mode="date" 
+              value="{{meterDate}}"
+              data-field="meterDate"
+              bindchange="onDateChange">
+              <view class="picker-display {{errors.meterDate ? 'error' : ''}}">
+                {{meterDate || '请选择记录日期'}}
+              </view>
+            </picker>
+          </view>
+          <text class="error-text" wx:if="{{errors.meterDate}}">{{errors.meterDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 费用结算 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">💰</text>
+        <text class="section-title">费用结算</text>
+        <text class="section-subtitle">(可选)</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">押金退还</text>
+            <view class="input-with-unit">
+              <input 
+                class="input"
+                placeholder="押金金额"
+                value="{{depositRefund}}"
+                data-field="depositRefund"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">元</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">最后账单</text>
+            <view class="input-with-unit">
+              <input 
+                class="input"
+                placeholder="水电费等"
+                value="{{finalBillAmount}}"
+                data-field="finalBillAmount"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">元</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="form-row" wx:if="{{depositRefund || finalBillAmount}}">
+          <view class="settlement-result">
+            <text class="settlement-label">实际退款</text>
+            <text class="settlement-amount">¥{{actualRefund || 0}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提示信息 -->
+    <view class="warning-card">
+      <view class="warning-icon">⚠️</view>
+      <view class="warning-content">
+        <text class="warning-title">退租后将：</text>
+        <text class="warning-item">• 清除租客信息</text>
+        <text class="warning-item">• 房间状态改为"空置"</text>
+        <text class="warning-item">• 生成最终账单</text>
+        <text class="warning-item">• 更新水电表读数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="footer-actions">
+    <button class="cancel-btn" bindtap="cancel">取消</button>
+    <button 
+      class="confirm-btn {{submitting ? 'disabled' : ''}}" 
+      bindtap="confirmCheckout"
+      disabled="{{submitting}}">
+      {{submitting ? '处理中...' : '确认退租'}}
+    </button>
+  </view>
+</view>

@@ -1,0 +1,341 @@
+<!--pages/room-edit/room-edit.wxml-->
+<!--简化优化的房间编辑页面-->
+<view class="container">
+  <!-- 页面加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <!-- 表单内容 -->
+  <scroll-view scroll-y class="form-scroll" wx:else>
+
+    <!-- 房间信息区域（选择楼栋后显示） -->
+    <view wx:if="{{showRoomSections}}">
+      <!-- 房间基础信息（简化） -->
+      <view class="form-section">
+        <view class="section-header">
+          <text class="section-icon">🏠</text>
+          <text class="section-title">房间信息</text>
+        </view>
+        
+        <view class="form-group">
+          <view class="form-label required">房间号</view>
+          <input 
+            class="form-input {{errors['roomNumber'] ? 'error' : ''}}"
+            value="{{room.roomNumber}}"
+            placeholder="如：101（纯数字）"
+            type="number"
+            data-field="roomNumber"
+            bindinput="onFieldChange"
+          />
+          <view class="error-text" wx:if="{{errors['roomNumber']}}">{{errors['roomNumber']}}</view>
+          <view class="field-hint">
+            <text class="hint-text">房间号为纯数字，如101、201等</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 费用标准（简化） -->
+      <view class="form-section">
+        <view class="section-header">
+          <text class="section-icon">💰</text>
+          <text class="section-title">费用标准</text>
+        </view>
+        
+        <view class="form-group">
+          <view class="form-label required">月租金</view>
+          <view class="input-with-unit">
+            <input 
+              class="form-input {{errors['feeStandard.monthlyRent'] ? 'error' : ''}}"
+              value="{{room.feeStandard.monthlyRent}}"
+              placeholder="3000"
+              type="number"
+              data-field="feeStandard.monthlyRent"
+              bindinput="onFieldChange"
+            />
+            <text class="input-unit">元/月</text>
+          </view>
+          <view class="error-text" wx:if="{{errors['feeStandard.monthlyRent']}}">{{errors['feeStandard.monthlyRent']}}</view>
+        </view>
+        
+        <view class="form-group">
+          <view class="form-label">押金</view>
+          <view class="input-with-unit">
+            <input 
+              class="form-input"
+              value="{{room.feeStandard.deposit}}"
+              placeholder="选填"
+              type="number"
+              data-field="feeStandard.deposit"
+              bindinput="onFieldChange"
+            />
+            <text class="input-unit">元</text>
+          </view>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-group third">
+            <view class="form-label">电费单价</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{room.feeStandard.electricityPrice}}"
+                placeholder="0.8"
+                type="digit"
+                data-field="feeStandard.electricityPrice"
+                bindinput="onFieldChange"
+              />
+              <text class="input-unit">元/度</text>
+            </view>
+          </view>
+          
+          <view class="form-group third">
+            <view class="form-label">水费单价</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{room.feeStandard.waterPrice}}"
+                placeholder="4.5"
+                type="digit"
+                data-field="feeStandard.waterPrice"
+                bindinput="onFieldChange"
+              />
+              <text class="input-unit">元/吨</text>
+            </view>
+          </view>
+
+          <view class="form-group third">
+            <view class="form-label">管理费</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{room.feeStandard.managementFee}}"
+                placeholder="选填"
+                type="number"
+                data-field="feeStandard.managementFee"
+                bindinput="onFieldChange"
+              />
+              <text class="input-unit">元/月</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-row">
+          <view class="form-group third">
+            <view class="form-label">卫生费</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{room.feeStandard.sanitationFee}}"
+                placeholder="选填"
+                type="number"
+                data-field="feeStandard.sanitationFee"
+                bindinput="onFieldChange"
+              />
+              <text class="input-unit">元/月</text>
+            </view>
+          </view>
+          
+          <view class="form-group third">
+            <view class="form-label">网费</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{room.feeStandard.internetFee}}"
+                placeholder="选填"
+                type="number"
+                data-field="feeStandard.internetFee"
+                bindinput="onFieldChange"
+              />
+              <text class="input-unit">元/月</text>
+            </view>
+          </view>
+
+          <view class="form-group third">
+            <view class="form-label">其他费用</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{room.feeStandard.otherFee}}"
+                placeholder="选填"
+                type="number"
+                data-field="feeStandard.otherFee"
+                bindinput="onFieldChange"
+              />
+              <text class="input-unit">元/月</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+
+      <!-- 费用备注 -->
+      <view class="form-section">
+        <view class="section-header">
+          <text class="section-icon">📝</text>
+          <text class="section-title">费用备注</text>
+        </view>
+        
+        <view class="form-group">
+          <view class="form-label">补充说明</view>
+          <textarea 
+            class="form-textarea"
+            value="{{room.remarks}}"
+            placeholder="可在此处说明“其他费用”的具体构成..."
+            data-field="remarks"
+            bindinput="onFieldChange"
+            maxlength="500"
+          ></textarea>
+          <view class="char-count">{{room.remarks.length || 0}}/500</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-actions">
+    <button class="action-btn cancel" bindtap="onCancel">取消</button>
+    <button 
+      class="action-btn copy" 
+      bindtap="showCopyDialog" 
+      wx:if="{{!isEdit && showRoomSections}}"
+      disabled="{{!room.buildingId}}"
+    >
+      批量复制
+    </button>
+    <button 
+      class="action-btn save {{saving ? 'loading' : ''}}" 
+      bindtap="onSave"
+      disabled="{{saving || !showRoomSections}}"
+    >
+      {{saving ? '保存中...' : '保存'}}
+    </button>
+  </view>
+</view>
+
+<!-- 楼栋添加弹窗 -->
+<view class="modal-overlay" wx:if="{{showBuildingDialog}}" bindtap="closeBuildingDialog">
+  <view class="modal-content" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">添加楼栋</text>
+      <button class="modal-close" bindtap="closeBuildingDialog">×</button>
+    </view>
+    
+    <view class="modal-body">
+      <view class="form-group">
+        <view class="form-label required">楼栋名称</view>
+        <input 
+          class="form-input"
+          value="{{buildingForm.name}}"
+          placeholder="1栋"
+          data-field="name"
+          bindinput="onBuildingFieldChange"
+          focus="{{showBuildingDialog}}"
+        />
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">详细地址</view>
+        <input 
+          class="form-input"
+          value="{{buildingForm.address}}"
+          placeholder="请输入详细地址"
+          data-field="address"
+          bindinput="onBuildingFieldChange"
+        />
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">楼层数</view>
+        <input 
+          class="form-input"
+          value="{{buildingForm.floors}}"
+          placeholder="4"
+          type="number"
+          data-field="floors"
+          bindinput="onBuildingFieldChange"
+        />
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="modal-btn cancel" bindtap="closeBuildingDialog">取消</button>
+      <button class="modal-btn confirm" bindtap="saveBuilding">确定</button>
+    </view>
+  </view>
+</view>
+
+<!-- 批量复制弹窗 -->
+<view class="modal-overlay large" wx:if="{{showCopyDialog}}" bindtap="closeCopyDialog">
+  <view class="modal-content large" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">房型批量复制</text>
+      <button class="modal-close" bindtap="closeCopyDialog">×</button>
+    </view>
+    
+    <view class="modal-body">
+      <view class="copy-settings">
+        <view class="form-row">
+          <view class="form-group half">
+            <view class="form-label">复制数量</view>
+            <input 
+              class="form-input"
+              value="{{copySettings.copyCount}}"
+              placeholder="1"
+              type="number"
+              data-field="copySettings.copyCount"
+              bindinput="onCopyFieldChange"
+              bindconfirm="generateRoomList"
+            />
+          </view>
+          <view class="form-group half">
+            <view class="form-label">
+              <checkbox 
+                checked="{{copySettings.multiFloor}}"
+                data-field="copySettings.multiFloor"
+                data-value="{{!copySettings.multiFloor}}"
+                bindtap="onCopyFieldChange"
+              />
+              多层生成
+            </view>
+          </view>
+        </view>
+        
+        <button class="generate-btn" bindtap="generateRoomList">生成房间列表</button>
+      </view>
+      
+      <!-- 生成的房间列表 -->
+      <view class="generated-rooms" wx:if="{{copySettings.generatedRooms.length}}">
+        <view class="rooms-header">
+          <text class="rooms-title">生成的房间（{{copySettings.generatedRooms.length}}间）</text>
+        </view>
+        
+        <scroll-view scroll-y class="rooms-list">
+          <view 
+            class="room-preview" 
+            wx:for="{{copySettings.generatedRooms}}" 
+            wx:key="id"
+          >
+            <view class="room-number">{{item.roomNumber}}室</view>
+            <view class="room-info">
+              <text>¥{{item.feeStandard.monthlyRent}}/月</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="modal-btn cancel" bindtap="closeCopyDialog">取消</button>
+      <button 
+        class="modal-btn confirm" 
+        bindtap="batchSaveRooms"
+        disabled="{{!copySettings.generatedRooms.length}}"
+      >
+        确认复制
+      </button>
+    </view>
+  </view>
+</view>

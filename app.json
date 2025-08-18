@@ -1,0 +1,71 @@
+ {
+  "pages": [
+    "pages/index/index",
+    "pages/rooms/rooms",
+    "pages/building-manage/building-manage",
+    "pages/room-edit/room-edit",
+    "pages/roomDetail/roomDetail",
+    "pages/rent-register/rent-register",
+    "pages/checkout-register/checkout-register",
+    "pages/update-register/update-register",
+    "pages/batch-rent/batch-rent",
+    "pages/meter-init/meter-init",
+    "pages/quickRent/quickRent",
+    "pages/meter/meter",
+    "pages/meter-batch/meter-batch",
+    "pages/bills/bills",
+    "pages/billDetail/billDetail",
+    "pages/my/my",
+    "pages/test-cloud/test-cloud"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1989fa",
+    "navigationBarTitleText": "房租管理",
+    "navigationBarTextStyle": "white",
+    "enablePullDownRefresh": true,
+    "backgroundColor": "#f7f8fa"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#40a9ff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/rooms/rooms",
+        "text": "房间",
+        "iconPath": "images/room.png",
+        "selectedIconPath": "images/room-active.png"
+      },
+      {
+        "pagePath": "pages/bills/bills",
+        "text": "账单",
+        "iconPath": "images/bill.png",
+        "selectedIconPath": "images/bill-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user-active.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredBackgroundModes": ["location"],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {}
+}

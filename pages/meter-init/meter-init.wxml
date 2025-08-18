@@ -1,0 +1,244 @@
+<!--pages/meter-init/meter-init.wxml-->
+<view class="page">
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:else class="content">
+    <!-- 统计信息卡片 -->
+    <view class="stats-card" wx:if="{{buildingInfo}}">
+      <view class="stats-header">
+        <text class="building-name">{{buildingInfo.name}}</text>
+        <text class="stats-subtitle">共{{totalRooms}}间房，{{unsetRooms}}间待设置</text>
+      </view>
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-label">总房间数</text>
+          <text class="stat-value">{{totalRooms}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">待设置</text>
+          <text class="stat-value highlight">{{unsetRooms}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">已选择</text>
+          <text class="stat-value selected">{{selectedRooms.length}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 录入模式切换 - 只在多房间模式显示 -->
+    <view class="mode-section" wx:if="{{!isSingleMode}}">
+      <view class="section-header">
+        <text class="section-icon">⚙️</text>
+        <text class="section-title">录入模式</text>
+      </view>
+      <view class="mode-toggle">
+        <view 
+          class="mode-option {{isBatchMode ? 'active' : ''}}"
+          bindtap="onModeChange">
+          <text class="mode-icon">📋</text>
+          <text class="mode-text">批量录入</text>
+          <text class="mode-desc">所有房间使用相同读数</text>
+        </view>
+        <view 
+          class="mode-option {{!isBatchMode ? 'active' : ''}}"
+          bindtap="onModeChange">
+          <text class="mode-icon">📝</text>
+          <text class="mode-text">单独录入</text>
+          <text class="mode-desc">每间房间单独设置</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 批量录入表单 -->
+    <view class="form-section" wx:if="{{isBatchMode}}">
+      <view class="section-header">
+        <text class="section-icon">💧</text>
+        <text class="section-title">统一表数</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">水表读数</text>
+            <view class="input-with-unit">
+              <input 
+                class="input {{errors.batchWaterReading ? 'error' : ''}}"
+                placeholder="当前水表读数"
+                value="{{batchWaterReading}}"
+                data-field="batchWaterReading"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">吨</text>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.batchWaterReading}}">{{errors.batchWaterReading}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">电表读数</text>
+            <view class="input-with-unit">
+              <input 
+                class="input {{errors.batchElectricityReading ? 'error' : ''}}"
+                placeholder="当前电表读数"
+                value="{{batchElectricityReading}}"
+                data-field="batchElectricityReading"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">度</text>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.batchElectricityReading}}">{{errors.batchElectricityReading}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 记录日期 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📅</text>
+        <text class="section-title">记录日期</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">抄表日期</text>
+            <picker 
+              mode="date" 
+              value="{{recordDate}}"
+              bindchange="onDateChange">
+              <view class="picker-display {{errors.recordDate ? 'error' : ''}}">
+                {{recordDate || '请选择抄表日期'}}
+              </view>
+            </picker>
+          </view>
+          <text class="error-text" wx:if="{{errors.recordDate}}">{{errors.recordDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 房间列表 -->
+    <view class="room-section">
+      <view class="section-header">
+        <text class="section-icon">🏠</text>
+        <text class="section-title">{{isSingleMode ? '房间信息' : '选择房间'}}</text>
+        <view class="selection-actions" wx:if="{{!isSingleMode}}">
+          <text class="action-btn" bindtap="selectAllRooms">全选</text>
+          <text class="action-btn" bindtap="clearSelection">清空</text>
+        </view>
+      </view>
+      
+      <view class="room-list">
+        <view 
+          wx:for="{{roomList}}" 
+          wx:key="_id"
+          class="room-item {{selectedRooms.includes(item._id) ? 'selected' : ''}}"
+          data-room-id="{{item._id}}"
+          bindtap="{{isSingleMode ? '' : 'onRoomSelect'}}">
+          
+          <view class="room-header">
+            <view class="room-basic">
+              <text class="room-number">{{item.roomNumber}}室</text>
+              <text class="room-status {{item.status}}">{{item.status === 'vacant' ? '空置' : item.status === 'rented' ? '已租' : '维修'}}</text>
+            </view>
+            <view class="check-icon {{selectedRooms.includes(item._id) ? 'checked' : ''}}" wx:if="{{!isSingleMode}}">
+              <text>{{selectedRooms.includes(item._id) ? '✓' : ''}}</text>
+            </view>
+          </view>
+          
+          <!-- 当前表数显示 -->
+          <view class="meter-info">
+            <view class="meter-item">
+              <text class="meter-label">水表</text>
+              <text class="meter-value">{{item.initialWaterReading || item.lastWaterReading || '未设置'}}</text>
+              <text class="meter-unit">吨</text>
+            </view>
+            <view class="meter-item">
+              <text class="meter-label">电表</text>
+              <text class="meter-value">{{item.initialElectricityReading || item.lastElectricityReading || '未设置'}}</text>
+              <text class="meter-unit">度</text>
+            </view>
+          </view>
+          
+          <!-- 单独录入模式的输入框 -->
+          <view class="individual-inputs" wx:if="{{!isBatchMode && selectedRooms.includes(item._id)}}">
+            <view class="input-group">
+              <text class="input-label">水表读数</text>
+              <view class="input-with-unit">
+                <input 
+                  class="mini-input {{errors[item._id] && errors[item._id].tempWaterReading ? 'error' : ''}}"
+                  placeholder="水表"
+                  value="{{item.tempWaterReading}}"
+                  data-field="tempWaterReading"
+                  data-room-id="{{item._id}}"
+                  bindinput="onInputChange"
+                  type="digit"
+                  catch:tap="stopPropagation"
+                />
+                <text class="unit">吨</text>
+              </view>
+            </view>
+            <view class="input-group">
+              <text class="input-label">电表读数</text>
+              <view class="input-with-unit">
+                <input 
+                  class="mini-input {{errors[item._id] && errors[item._id].tempElectricityReading ? 'error' : ''}}"
+                  placeholder="电表"
+                  value="{{item.tempElectricityReading}}"
+                  data-field="tempElectricityReading"
+                  data-room-id="{{item._id}}"
+                  bindinput="onInputChange"
+                  type="digit"
+                  catch:tap="stopPropagation"
+                />
+                <text class="unit">度</text>
+              </view>
+            </view>
+            <view class="input-errors" wx:if="{{errors[item._id]}}">
+              <text class="error-text" wx:if="{{errors[item._id].tempWaterReading}}">{{errors[item._id].tempWaterReading}}</text>
+              <text class="error-text" wx:if="{{errors[item._id].tempElectricityReading}}">{{errors[item._id].tempElectricityReading}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <text class="error-text" wx:if="{{errors.selection}}">{{errors.selection}}</text>
+    </view>
+
+    <!-- 操作提示 -->
+    <view class="tips-card" wx:if="{{selectedRooms.length > 0}}">
+      <view class="tips-icon">💡</view>
+      <view class="tips-content">
+        <text class="tips-title">设置说明</text>
+        <text class="tips-item">• 初始表数用于后续计费基准</text>
+        <text class="tips-item">• 建议设置为房间当前真实读数</text>
+        <text class="tips-item">• 已选择 {{selectedRooms.length}} 间房间</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="footer-actions" wx:if="{{!loading}}">
+    <button class="cancel-btn" bindtap="cancel">取消</button>
+    <button 
+      class="confirm-btn {{submitting || selectedRooms.length === 0 ? 'disabled' : ''}}" 
+      bindtap="submitMeterInit"
+      disabled="{{submitting || selectedRooms.length === 0}}">
+      {{submitting ? '处理中...' : '确认设置(' + selectedRooms.length + '间)'}}
+    </button>
+  </view>
+</view>
+
+<wxs module="helper">
+  function stopPropagation(event) {
+    event.stopPropagation()
+    return false
+  }
+  
+  module.exports = {
+    stopPropagation: stopPropagation
+  }
+</wxs>

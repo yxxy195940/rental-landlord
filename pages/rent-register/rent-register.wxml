@@ -1,0 +1,147 @@
+<!--pages/rent-register/rent-register.wxml-->
+<view class="page">
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:else class="content">
+
+      <!-- 抄录当前表数 -->
+      <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">💧</text>
+        <text class="section-title">抄录当前表数</text>
+        <text class="section-subtitle">(用作基数)</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">当前水表</text>
+            <view class="input-with-unit">
+              <input 
+                class="input {{errors.currentWaterReading ? 'error' : ''}}"
+                placeholder="请输入当前水表读数"
+                value="{{currentWaterReading}}"
+                data-field="currentWaterReading"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">吨</text>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.currentWaterReading}}">{{errors.currentWaterReading}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">当前电表</text>
+            <view class="input-with-unit">
+              <input 
+                class="input {{errors.currentElectricityReading ? 'error' : ''}}"
+                placeholder="请输入当前电表读数"
+                value="{{currentElectricityReading}}"
+                data-field="currentElectricityReading"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">度</text>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.currentElectricityReading}}">{{errors.currentElectricityReading}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">记录日期</text>
+            <picker 
+              mode="date" 
+              value="{{meterDate}}"
+              data-field="meterDate"
+              bindchange="onDateChange">
+              <view class="picker-display {{errors.meterDate ? 'error' : ''}}">
+                {{meterDate || '请选择记录日期'}}
+              </view>
+            </picker>
+          </view>
+          <text class="error-text" wx:if="{{errors.meterDate}}">{{errors.meterDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 租客信息 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">👤</text>
+        <text class="section-title">租客信息</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">姓名</text>
+            <input 
+              class="input {{errors.tenantName ? 'error' : ''}}"
+              placeholder="可选填写"
+              value="{{tenantName}}"
+              data-field="tenantName"
+              bindinput="onInputChange"
+            />
+          </view>
+          <text class="error-text" wx:if="{{errors.tenantName}}">{{errors.tenantName}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">手机号</text>
+            <input 
+              class="input {{errors.tenantPhone ? 'error' : ''}}"
+              placeholder="可选填写"
+              value="{{tenantPhone}}"
+              data-field="tenantPhone"
+              bindinput="onInputChange"
+              type="number"
+              maxlength="11"
+            />
+          </view>
+          <text class="error-text" wx:if="{{errors.tenantPhone}}">{{errors.tenantPhone}}</text>
+        </view>
+        
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">身份证号</text>
+            <input 
+              class="input"
+              placeholder="可选填写"
+              value="{{tenantIdCard}}"
+              data-field="tenantIdCard"
+              bindinput="onInputChange"
+              maxlength="18"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+
+
+    <!-- 提示信息 -->
+    <view class="tip-card">
+      <view class="tip-icon">💡</view>
+      <view class="tip-content">
+        <text class="tip-title">出租后将自动：</text>
+        <text class="tip-item">• 房间状态改为"已出租"</text>
+        <text class="tip-item">• 设置水电表基数</text>
+        <text class="tip-item">• 创建租客档案</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="footer-actions">
+    <button class="cancel-btn" bindtap="cancel">取消</button>
+    <button 
+      class="confirm-btn {{submitting ? 'disabled' : ''}}" 
+      bindtap="confirmRent"
+      disabled="{{submitting}}">
+      {{submitting ? '处理中...' : '确认出租'}}
+    </button>
+  </view>
+</view>

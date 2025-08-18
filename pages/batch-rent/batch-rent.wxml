@@ -1,0 +1,240 @@
+<!--pages/batch-rent/batch-rent.wxml-->
+<view class="page">
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:else class="content">
+    <!-- 统计信息卡片 -->
+    <view class="stats-card" wx:if="{{buildingInfo}}">
+      <view class="stats-header">
+        <text class="building-name">{{buildingInfo.name}}</text>
+        <text class="stats-subtitle">{{totalVacant}}间未登记房间</text>
+      </view>
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-label">未登记房间</text>
+          <text class="stat-value">{{totalVacant}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">已选择</text>
+          <text class="stat-value selected">{{selectedCount}}</text>
+        </view>
+        <view class="stat-item">
+          <button class="expand-all-btn" bindtap="toggleExpandAll">
+            {{expandedRooms.length === totalVacant ? '全部收起' : '全部展开'}}
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 房间列表 -->
+    <view class="room-section">
+      <view class="section-header">
+        <text class="section-icon">🏠</text>
+        <text class="section-title">选择房间</text>
+      </view>
+      
+      <view wx:if="{{vacantRooms.length === 0}}" class="empty-state">
+        <text class="empty-icon">🏠</text>
+        <text class="empty-title">暂无未登记房间</text>
+        <text class="empty-subtitle">当前楼栋下没有可出租的房间</text>
+      </view>
+      
+      <view wx:else class="room-list">
+        <view 
+          wx:for="{{vacantRooms}}" 
+          wx:key="_id"
+          class="room-card {{helper.isSelected(selectedRooms, item._id) ? 'selected' : ''}}">
+          
+          <!-- 房间头部 -->
+          <view class="room-header">
+            <view class="room-basic" data-room-id="{{item._id}}" bindtap="onRoomHeaderTap">
+              <text class="room-number">{{item.roomNumber}}室</text>
+              <text class="room-rent">¥{{item.monthlyRent || 0}}/月</text>
+            </view>
+            <view class="room-actions">
+              <view 
+                class="check-icon {{helper.isSelected(selectedRooms, item._id) ? 'checked' : ''}}"
+                data-room-id="{{item._id}}"
+                bindtap="onRoomSelect">
+                <text>{{helper.isSelected(selectedRooms, item._id) ? '✓' : ''}}</text>
+              </view>
+              <view 
+                class="expand-btn {{helper.isExpanded(expandedRooms, item._id) ? 'expanded' : ''}}"
+                data-room-id="{{item._id}}"
+                bindtap="onExpandToggle">
+                <text>{{helper.isExpanded(expandedRooms, item._id) ? '▲' : '▼'}}</text>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 房间详情表单 -->
+          <view class="room-form {{helper.isExpanded(expandedRooms, item._id) ? 'expanded' : ''}}">
+            <!-- 水电表信息 -->
+            <view class="form-group">
+              <text class="group-title">初始水电表</text>
+              <view class="meter-row">
+                <view class="meter-item">
+                  <text class="form-label">水表<text class="required">*</text></text>
+                  <view class="input-with-unit">
+                    <input 
+                      class="form-input {{item.errors.currentWaterReading ? 'error' : ''}}"
+                      placeholder="水表读数"
+                      value="{{item.currentWaterReading}}"
+                      data-room-id="{{item._id}}"
+                      data-field="currentWaterReading"
+                      bindinput="onInputChange"
+                      type="digit"
+                    />
+                    <text class="unit">吨</text>
+                  </view>
+                </view>
+                <view class="meter-item">
+                  <text class="form-label">电表<text class="required">*</text></text>
+                  <view class="input-with-unit">
+                    <input 
+                      class="form-input {{item.errors.currentElectricityReading ? 'error' : ''}}"
+                      placeholder="电表读数"
+                      value="{{item.currentElectricityReading}}"
+                      data-room-id="{{item._id}}"
+                      data-field="currentElectricityReading"
+                      bindinput="onInputChange"
+                      type="digit"
+                    />
+                    <text class="unit">度</text>
+                  </view>
+                </view>
+              </view>
+              <text class="error-text" wx:if="{{item.errors.currentWaterReading}}">{{item.errors.currentWaterReading}}</text>
+              <text class="error-text" wx:if="{{item.errors.currentElectricityReading}}">{{item.errors.currentElectricityReading}}</text>
+              
+              <view class="form-row">
+                <text class="form-label">记录日期</text>
+                <picker 
+                  mode="date" 
+                  value="{{item.meterDate}}"
+                  data-room-id="{{item._id}}"
+                  data-field="meterDate"
+                  bindchange="onDateChange">
+                  <view class="form-picker">
+                    {{item.meterDate || '选择日期'}}
+                  </view>
+                </picker>
+              </view>
+            </view>
+
+            <!-- 租客信息 -->
+            <view class="form-group">
+              <text class="group-title">租客信息</text>
+              <view class="form-row">
+                <text class="form-label">姓名</text>
+                <input 
+                  class="form-input {{item.errors.tenantName ? 'error' : ''}}"
+                  placeholder="租客姓名（可选）"
+                  value="{{item.tenantName}}"
+                  data-room-id="{{item._id}}"
+                  data-field="tenantName"
+                  bindinput="onInputChange"
+                  maxlength="20"
+                />
+              </view>
+              <text class="error-text" wx:if="{{item.errors.tenantName}}">{{item.errors.tenantName}}</text>
+              
+              <view class="form-row">
+                <text class="form-label">手机号</text>
+                <input 
+                  class="form-input {{item.errors.tenantPhone ? 'error' : ''}}"
+                  placeholder="手机号（可选）"
+                  value="{{item.tenantPhone}}"
+                  data-room-id="{{item._id}}"
+                  data-field="tenantPhone"
+                  bindinput="onInputChange"
+                  type="number"
+                  maxlength="11"
+                />
+              </view>
+              <text class="error-text" wx:if="{{item.errors.tenantPhone}}">{{item.errors.tenantPhone}}</text>
+            </view>
+            
+            
+            <!-- 备注 -->
+            <view class="form-group">
+              <text class="group-title">备注</text>
+              <view class="form-row">
+                <input 
+                  class="form-input"
+                  placeholder="备注信息(可选)"
+                  value="{{item.remark}}"
+                  data-room-id="{{item._id}}"
+                  data-field="remark"
+                  bindinput="onInputChange"
+                  maxlength="200"
+                />
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作提示 -->
+    <view class="tips-card" wx:if="{{selectedCount > 0}}">
+      <view class="tips-icon">💡</view>
+      <view class="tips-content">
+        <text class="tips-title">批量登记提示</text>
+        <text class="tips-item">• 已选择 {{selectedCount}} 间房间</text>
+        <text class="tips-item">• 点击房间名称可展开/收起表单</text>
+        <text class="tips-item">• 点击复选框可取消勾选房间</text>
+        <text class="tips-item">• 水表和电表读数为必填项</text>
+      </view>
+    </view>
+    
+    <!-- 初始提示 -->
+    <view class="tips-card" wx:elif="{{vacantRooms.length > 0 && selectedCount === 0}}">
+      <view class="tips-icon">👆</view>
+      <view class="tips-content">
+        <text class="tips-title">开始批量登记</text>
+        <text class="tips-item">• 点击房间名称区域自动勾选并展开表单</text>
+        <text class="tips-item">• 使用"全部展开"可快速查看所有房间</text>
+        <text class="tips-item">• 水表和电表读数为必填项</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="footer-actions" wx:if="{{!loading}}">
+    <button class="cancel-btn" bindtap="cancel">取消</button>
+    <button 
+      class="confirm-btn {{submitting || selectedCount === 0 ? 'disabled' : ''}}" 
+      bindtap="batchSubmitRent"
+      disabled="{{submitting || selectedCount === 0}}">
+      {{submitting ? '登记中...' : '确认登记(' + selectedCount + '间)'}}
+    </button>
+  </view>
+</view>
+
+<wxs module="helper">
+  function isExpanded(expandedRooms, roomId) {
+    for (var i = 0; i < expandedRooms.length; i++) {
+      if (expandedRooms[i] === roomId) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  function isSelected(selectedRooms, roomId) {
+    for (var i = 0; i < selectedRooms.length; i++) {
+      if (selectedRooms[i] === roomId) {
+        return true
+      }
+    }
+    return false
+  }
+  
+  module.exports = {
+    isExpanded: isExpanded,
+    isSelected: isSelected
+  }
+</wxs>

@@ -1,0 +1,107 @@
+/* pages/building-manage/building-manage.wxss */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f7f8fa;
+}
+
+.building-list-scroll {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+.building-list {
+  padding: 15px;
+}
+
+.building-card-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  transition: transform 0.2s;
+}
+
+.building-card-wrapper.delete-mode {
+  transform: translateX(-40px);
+}
+
+.building-checkbox {
+  margin-right: 10px;
+}
+
+.building-card {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 15px;
+}
+
+.building-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.building-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.building-details {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.edit-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background-color: #fff;
+  border-top: 1px solid #ebedf0;
+}
+
+.action-btn {
+  flex: 1;
+  margin: 0 5px;
+  border-radius: 20px;
+}
+
+.primary-btn {
+  background-color: #1989fa;
+  color: #fff;
+}
+
+.cancel-btn {
+  background-color: #f7f8fa;
+  color: #555;
+}
+
+.confirm-btn {
+  background-color: #ee0a24;
+  color: #fff;
+}
+
+.empty-list {
+  text-align: center;
+  padding: 50px 0;
+  color: #999;
+}
+
+.dialog-content {
+  padding: 20px;
+}

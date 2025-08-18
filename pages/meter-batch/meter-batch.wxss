@@ -1,0 +1,274 @@
+/* pages/meter-batch/meter-batch.wxss */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #F7F8FA;
+}
+
+/* --- 顶部固定区域 --- */
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+}
+
+/* 选择器容器 */
+.selector-container {
+  display: flex;
+  gap: 15px;
+}
+
+.selector-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selector-label {
+  font-size: 13px;
+  color: #646566;
+}
+
+.picker-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background-color: #f7f8fa;
+  border: 1px solid #ebedf0;
+  border-radius: 8px;
+}
+
+.picker-text {
+  font-size: 15px;
+  color: #323233;
+  font-weight: 500;
+}
+
+.picker-arrow {
+  font-size: 12px;
+  color: #969799;
+  transform: scale(0.8);
+}
+
+/* --- 可滚动内容区 --- */
+.content-scroll {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  /* 调整 padding-top 以适应 header-fixed 的高度 */
+  padding-top: 95px; 
+}
+
+.meter-container {
+  padding: 15px;
+  padding-bottom: 80px;
+}
+
+/* 房间列表 */
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 房间头部 */
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f1f5;
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-number {
+  font-size: 20px;
+  font-weight: bold;
+  color: #323233; /* 加深颜色 */
+}
+
+.tenant-name {
+  font-size: 13px;
+  color: #646566;
+  background-color: #f0f1f5;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+/* 状态文本 */
+.submission-status text {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-weight: 500;
+}
+
+.status-ready {
+  color: #ff976a;
+  background: #fff4e6;
+}
+
+.status-submitting {
+  color: #1989fa;
+  background: #e8f4fd;
+}
+
+.status-completed {
+  color: #07c160;
+  background: #e6f8e6;
+}
+
+/* 水电表横向布局 */
+.meter-row {
+  display: flex;
+  gap: 0;
+  padding: 16px 8px;
+  background-color: #FFFFFF; /* 改为白色背景 */
+}
+
+.meter-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.meter-item:first-child {
+  border-right: 1px solid #ebedf0;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.meter-type {
+  font-size: 15px; /* 调整大小 */
+  font-weight: bold;
+  color: #323233;
+}
+
+.last-reading {
+  font-size: 13px;
+  color: #646566; /* 调整颜色 */
+}
+
+.last-reading-value {
+  font-weight: bold;
+  color: #323233;
+  margin-left: 4px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background-color: #f7f8fa; /* 输入框背景色 */
+  border: 1px solid #f7f8fa;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.input-group:focus-within {
+  border-color: #1989fa;
+  background-color: #fff;
+}
+
+.meter-input {
+  flex: 1;
+  height: 40px;
+  border: none;
+  padding: 0 10px;
+  font-size: 18px; /* 加大字体 */
+  font-weight: 500;
+  background-color: transparent;
+  min-width: 0;
+  color: #1989fa;
+}
+
+.meter-input::placeholder {
+  color: #c8c9cc;
+  font-weight: 400;
+  font-size: 15px;
+}
+
+/* Disabled/Completed State */
+.meter-input:disabled {
+  color: #07c160;
+  -webkit-text-fill-color: #07c160; /* for iOS */
+  opacity: 1;
+}
+
+.input-group.completed {
+  background-color: #f2fcf2;
+  border-color: #cce8cc;
+}
+
+.usage-info {
+  font-size: 13px;
+  color: #323233;
+  margin-top: 4px;
+  text-align: left; /* 左对齐 */
+  padding-left: 4px;
+}
+
+.usage-value {
+  font-weight: bold;
+  color: #07c160;
+  margin-left: 4px;
+}
+
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 16px;
+  color: #323233;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.empty-subtitle {
+  font-size: 14px;
+  color: #969799;
+  line-height: 1.4;
+}

@@ -1,0 +1,269 @@
+/* pages/billDetail/billDetail.wxss */
+.page {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.loading-text {
+  font-size: 16px;
+  color: #969799;
+}
+
+/* 账单详情容器 */
+.bill-detail-container {
+  padding: 16px;
+}
+
+.bill-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 头部信息 */
+.header-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bill-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #323233;
+  margin-bottom: 8px;
+}
+
+.bill-no {
+  font-size: 14px;
+  color: #646566;
+  margin-bottom: 16px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-badge.paid {
+  background: #e8f5e8;
+  color: #07c160;
+}
+
+.status-badge.unpaid {
+  background: #fff4e6;
+  color: #ff976a;
+}
+
+/* 通用section样式 */
+.info-section,
+.fees-section,
+.meter-section,
+.payment-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #323233;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f1f5;
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 15px;
+  color: #646566;
+  flex-shrink: 0;
+  width: 80px;
+}
+
+.value {
+  font-size: 15px;
+  color: #323233;
+  text-align: right;
+  flex: 1;
+}
+
+.paid-amount {
+  color: #07c160;
+  font-weight: 500;
+}
+
+/* 费用明细 */
+.fee-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.fee-item:last-of-type {
+  border-bottom: none;
+}
+
+.fee-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fee-name {
+  font-size: 16px;
+  color: #323233;
+  font-weight: 500;
+}
+
+.fee-usage {
+  font-size: 13px;
+  color: #969799;
+}
+
+.fee-amount {
+  font-size: 16px;
+  color: #323233;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* 总计部分 */
+.total-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #f0f1f5;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 18px;
+  color: #323233;
+  font-weight: bold;
+}
+
+.total-amount {
+  font-size: 24px;
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+/* 操作按钮 */
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.action-btn {
+  height: 48px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.primary {
+  background: #1989fa;
+  color: white;
+}
+
+.action-btn.primary:active {
+  background: #1976d2;
+}
+
+.action-btn.secondary {
+  background: #f7f8fa;
+  color: #323233;
+  border: 1px solid #ebedf0;
+}
+
+.action-btn.secondary:active {
+  background: #ebedf0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background: white;
+  border-radius: 12px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: #969799;
+}
+
+/* 响应式设计 */
+@media (max-width: 400px) {
+  .bill-detail-container {
+    padding: 12px;
+  }
+  
+  .header-section,
+  .info-section,
+  .fees-section,
+  .meter-section,
+  .payment-section {
+    padding: 16px;
+  }
+  
+  .bill-title {
+    font-size: 20px;
+  }
+  
+  .total-amount {
+    font-size: 20px;
+  }
+  
+  .actions-section {
+    gap: 10px;
+  }
+  
+  .action-btn {
+    height: 44px;
+    font-size: 15px;
+  }
+}
