@@ -161,5 +161,12 @@ Page({
     wx.navigateTo({
       url: '/pages/building-manage/building-manage',
     });
+  },
+
+  goToBatchRent: function() {
+    const buildingId = this.data.buildings[this.data.buildingIndex].id;
+    wx.navigateTo({
+      url: `/pages/batch-rent/batch-rent?buildingId=${buildingId}`,
+    });
   }
 });

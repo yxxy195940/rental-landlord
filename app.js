@@ -177,6 +177,74 @@ App({
   },
 
   /**
+   * 处理登录
+   */
+  handleLogin() {
+    wx.showModal({
+      title: '登录提示',
+      content: '您尚未登录，是否立即登录？',
+      success: (res) => {
+        if (res.confirm) {
+          this.login()
+        }
+      }
+    })
+  },
+
+  /**
+   * 登录
+   */
+  login() {
+    wx.login({
+      success: (res) => {
+        if (res.code) {
+          // 调用云函数获取openid
+          wx.cloud.callFunction({
+            name: 'user',
+            data: {
+              type: 'getOpenId'
+            },
+            success: (res) => {
+              const { openid } = res.result
+              this.globalData.userInfo = { ...this.globalData.userInfo, openid }
+              wx.setStorageSync('userInfo', this.globalData.userInfo)
+              this.globalData.isLogin = true
+              this.showToast('登录成功')
+            },
+            fail: (err) => {
+              console.error('获取openid失败:', err)
+              this.showToast('登录失败')
+            }
+          })
+        } else {
+          console.error('登录失败！' + res.errMsg)
+          this.showToast('登录失败')
+        }
+      }
+    })
+  },
+
+  /**
+   * 获取用户信息
+   */
+  getUserProfile() {
+    return new Promise((resolve, reject) => {
+      wx.getUserProfile({
+        desc: '用于完善会员资料',
+        success: (res) => {
+          this.globalData.userInfo = { ...this.globalData.userInfo, ...res.userInfo }
+          wx.setStorageSync('userInfo', this.globalData.userInfo)
+          resolve(res.userInfo)
+        },
+        fail: (err) => {
+          console.error('获取用户信息失败:', err)
+          reject(err)
+        }
+      })
+    })
+  },
+
+  /**
    * 刷新登录状态
    */
   refreshLoginStatus() {

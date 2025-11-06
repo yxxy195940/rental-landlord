@@ -1,6 +1,6 @@
 // pages/bills/bills.js
 import request from '../../utils/request';
-const storage = require('../../utils/storage');
+const storage = require('../../utils/storage').default;
 
 Page({
   data: {
@@ -392,10 +392,6 @@ Page({
     this.loadBillList(false);
   },
 
-  // 下拉刷新
-  onPullDownRefresh() {
-    this.loadBillList().finally(() => {
-      wx.stopPullDownRefresh();
-    });
-  }
+  // 下拉刷新（已禁用，保留空实现防御）
+  onPullDownRefresh() { try { wx.stopPullDownRefresh(); } catch (e) {} }
 })

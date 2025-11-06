@@ -20,6 +20,7 @@ cloud.init({
 
 // 获取数据库引用
 const db = cloud.database()
+const _ = db.command
 
 // 辅助函数：更新楼栋的updatedAt时间戳
 async function updateBuildingTimestamp(buildingId) {
@@ -67,6 +68,8 @@ exports.main = async (event, context) => {
         return await updateRoom(params, OPENID)
       case 'delete':
         return await deleteRoom(params, OPENID)
+      case 'batchDelete':
+        return await batchDeleteRooms(params, OPENID)
       case 'rent':
         return await rentRoom(params, OPENID)
       case 'checkout':
@@ -110,6 +113,80 @@ exports.main = async (event, context) => {
     }
   }
 }
+
+/**
+ * 批量删除房间
+ * @param {Object} params - 参数
+ * @param {string[]} params.roomIds - 要删除的房间ID列表
+ * @param {string} openId - 用户openId
+ */
+async function batchDeleteRooms(params, openId) {
+  try {
+    const { roomIds } = params;
+
+    if (!roomIds || !Array.isArray(roomIds) || roomIds.length === 0) {
+      return {
+        code: 400,
+        message: '房间ID列表不能为空',
+        data: null
+      };
+    }
+
+    // 为安全起见，再次确认所有待删除房间都属于当前用户
+    const roomsToDelete = await db.collection('rooms').where({
+      _id: _.in(roomIds),
+      landlordId: openId
+    }).get();
+
+    const validRoomIds = roomsToDelete.data.map(room => room._id);
+    const buildingIds = [...new Set(roomsToDelete.data.map(room => room.buildingId).filter(id => id))];
+
+
+    if (validRoomIds.length === 0) {
+      return {
+        code: 404,
+        message: '没有找到可删除的房间',
+        data: null
+      };
+    }
+
+    // 软删除：标记为已删除
+    const result = await db.collection('rooms').where({
+      _id: _.in(validRoomIds)
+    }).update({
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
+
+    console.log('房间批量删除成功', {
+      deletedCount: result.stats.updated,
+      roomIds: validRoomIds,
+      landlordId: openId
+    });
+    
+    // 异步更新所有相关楼栋的时间戳
+    if (buildingIds.length > 0) {
+      await Promise.all(buildingIds.map(id => updateBuildingTimestamp(id)));
+    }
+
+
+    return {
+      code: 200,
+      message: '批量删除成功',
+      data: {
+        deletedCount: result.stats.updated
+      }
+    };
+
+  } catch (error) {
+    console.error('批量删除房间失败', error);
+    throw error;
+  }
+}
+
 
 /**
  * 获取房间列表
@@ -517,7 +594,7 @@ async function deleteRoom(params, openId) {
       }
     }
     
-    // 软删除：标记为��删除而不是物理删除
+    // 软删除：标记为已删除而不是物理删除
     const result = await db.collection('rooms').doc(roomId).update({
       data: {
         isDeleted: true,

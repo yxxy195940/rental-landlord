@@ -14,7 +14,7 @@
       <view class="quick-actions-grid">
         <view class="action-card" bindtap="goToRooms">
           <image class="action-icon" src="/images/home-active.svg" />
-          <view class="action-text">房间管理</view>
+          <view class="action-text">房产管理</view>
         </view>
         <view class="action-card" bindtap="goToMeterReading">
           <image class="action-icon" src="/images/bill-active.svg" />

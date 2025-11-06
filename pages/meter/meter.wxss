@@ -1,0 +1,57 @@
+/* Discover-like list UI for meter tab */
+.meter-page {
+  background: #f7f8fa;
+  min-height: 100vh;
+}
+
+.cell-group {
+  background: #ffffff;
+  margin-top: 20rpx;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #f2f3f5;
+}
+
+.cell:last-child {
+  border-bottom: none;
+}
+
+.cell-hover {
+  background: #f7f8fa;
+}
+
+.cell-icon {
+  width: 44rpx;
+  height: 44rpx;
+  margin-right: 24rpx;
+}
+
+.cell-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-title {
+  font-size: 32rpx;
+  color: #323233;
+  font-weight: 600;
+}
+
+.cell-desc {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #969799;
+}
+
+.cell-arrow {
+  width: 28rpx;
+  height: 28rpx;
+  transform: rotate(-90deg);
+  opacity: 0.6;
+}
+

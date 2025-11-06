@@ -126,21 +126,7 @@
 
             <!-- 租客信息 -->
             <view class="form-group">
-              <text class="group-title">租客信息</text>
-              <view class="form-row">
-                <text class="form-label">姓名</text>
-                <input 
-                  class="form-input {{item.errors.tenantName ? 'error' : ''}}"
-                  placeholder="租客姓名（可选）"
-                  value="{{item.tenantName}}"
-                  data-room-id="{{item._id}}"
-                  data-field="tenantName"
-                  bindinput="onInputChange"
-                  maxlength="20"
-                />
-              </view>
-              <text class="error-text" wx:if="{{item.errors.tenantName}}">{{item.errors.tenantName}}</text>
-              
+              <text class="group-title">租客信息</text>              
               <view class="form-row">
                 <text class="form-label">手机号</text>
                 <input 
@@ -155,6 +141,19 @@
                 />
               </view>
               <text class="error-text" wx:if="{{item.errors.tenantPhone}}">{{item.errors.tenantPhone}}</text>
+              <view class="form-row">
+                <text class="form-label">姓名</text>
+                <input 
+                  class="form-input {{item.errors.tenantName ? 'error' : ''}}"
+                  placeholder="租客姓名（可选）"
+                  value="{{item.tenantName}}"
+                  data-room-id="{{item._id}}"
+                  data-field="tenantName"
+                  bindinput="onInputChange"
+                  maxlength="20"
+                />
+              </view>
+              <text class="error-text" wx:if="{{item.errors.tenantName}}">{{item.errors.tenantName}}</text>
             </view>
             
             

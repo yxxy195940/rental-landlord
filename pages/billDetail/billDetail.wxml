@@ -115,11 +115,8 @@
         <button wx:if="{{billDetail.status !== 2}}" class="action-btn primary" bindtap="markBillPaid">
           标记收款
         </button>
-        <button class="action-btn secondary" bindtap="generateBillImage">
-          生成图片
-        </button>
-        <button class="action-btn secondary" bindtap="shareImage">
-          分享账单
+        <button class="action-btn secondary" bindtap="shareBill">
+          分享账单图片
         </button>
       </view>
     </view>

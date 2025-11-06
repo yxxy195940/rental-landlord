@@ -26,6 +26,18 @@
     <text>空置: {{vacantCount}}</text>
   </view>
 
+  <!-- 批量出租提示 -->
+  <view class="batch-rent-banner" wx:if="{{vacantCount > 0}}" bindtap="goToBatchRent">
+    <view class="banner-content">
+      <text class="banner-icon">🚀</text>
+      <view class="banner-text">
+        <text class="banner-title">有 {{vacantCount}} 间房可出租</text>
+        <text class="banner-subtitle">点击这里，一键批量登记</text>
+      </view>
+    </view>
+    <text class="banner-arrow">></text>
+  </view>
+
   <!-- 房间列表 -->
   <scroll-view scroll-y class="room-list-scroll">
     <view class="room-list">

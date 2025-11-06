@@ -61,13 +61,13 @@ Page({
   },
 
   goToRooms() {
-    wx.switchTab({
-      url: '/pages/rooms/rooms',
+    wx.navigateTo({
+      url: '/pages/building-manage/building-manage',
     });
   },
 
   goToBills() {
-    wx.switchTab({
+    wx.navigateTo({
       url: '/pages/bills/bills',
     });
   },

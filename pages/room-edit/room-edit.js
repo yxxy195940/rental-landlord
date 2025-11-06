@@ -52,8 +52,8 @@ Page({
       feeStandard: {
         monthlyRent: '',     // 月租金
         deposit: '',         // 押金
-        electricityPrice: '0.8',  // 电费单价
-        waterPrice: '4.5',   // 水费单价
+        electricityPrice: '',  // 电费单价
+        waterPrice: '',   // 水费单价
         internetFee: '',      // 网费（可选）
         sanitationFee: '',   // 卫生费
         managementFee: '',   // 管理费
@@ -77,6 +77,8 @@ Page({
     copySettings: {
       copyCount: 1,        // 复制数量
       multiFloor: false,   // 是否多层生成
+      startFloor: '',     // 起始楼层
+      endFloor: '',       // 结束楼层
       generatedRooms: []   // 生成的房间列表
     },
     
@@ -195,8 +197,8 @@ Page({
       feeStandard: {
         monthlyRent: data.monthlyRent || '',
         deposit: data.deposit || '',
-        electricityPrice: data.electricityPrice || '0.8',
-        waterPrice: data.waterPrice || '4.5',
+        electricityPrice: data.electricityPrice || '',
+        waterPrice: data.waterPrice || '',
         internetFee: data.internetFee || '',
         sanitationFee: data.sanitationFee || '',
         managementFee: data.managementFee || '',
@@ -611,19 +613,14 @@ Page({
     let value = event.detail ? event.detail.value : event.currentTarget.dataset.value
     
     if (field) {
-      const fieldPath = field.split('.')
-      let updateData = {}
-      let current = updateData
-      
-      // 构建嵌套对象路径
-      for (let i = 0; i < fieldPath.length - 1; i++) {
-        current[fieldPath[i]] = current[fieldPath[i]] || {}
-        current = current[fieldPath[i]]
-      }
-      current[fieldPath[fieldPath.length - 1]] = value
-      
-      this.setData(updateData)
+      this.setData({ [field]: value });
     }
+  },
+
+  onMultiFloorChange(e) {
+    this.setData({
+      'copySettings.multiFloor': e.detail.value
+    });
   },
 
   /**
@@ -661,75 +658,73 @@ Page({
    * 生成批量房间列表
    */
   generateRoomList() {
-    const { room, copySettings, selectedBuilding } = this.data
-    const { copyCount, multiFloor } = copySettings
-    const baseRoomNumber = parseInt(room.roomNumber)
-    const generatedRooms = []
+    const { room, copySettings } = this.data;
+    const { copyCount, multiFloor, startFloor, endFloor } = copySettings;
+    const baseRoomNumberStr = room.roomNumber;
+    const generatedRooms = [];
+    generatedRooms.push(room);
     
-    if (!baseRoomNumber || copyCount < 1) {
-      wx.showToast({
-        title: '请输入有效的复制数量',
-        icon: 'none'
-      })
-      return
+    if (!baseRoomNumberStr || !/^[1-9]\d{2,}$/.test(baseRoomNumberStr)) {
+      wx.showToast({ title: '请输入至少3位的有效房间号', icon: 'none' });
+      return;
     }
-    
-    if (multiFloor && selectedBuilding.floors) {
-      // 多层生成
-      const currentFloor = Math.floor(baseRoomNumber / 100)
-      const roomSuffix = baseRoomNumber % 100
-      
-      for (let floor = currentFloor; floor <= selectedBuilding.floors; floor++) {
-        for (let i = 0; i < copyCount; i++) {
-          const newRoomNumber = floor * 100 + roomSuffix + i
-          generatedRooms.push({
-            ...room,
-            roomNumber: newRoomNumber.toString(),
-            floor: floor,
-            id: `temp_${newRoomNumber}`
-          })
-        }
+
+    const baseRoomNumber = parseInt(baseRoomNumberStr);
+    const roomSuffix = baseRoomNumberStr.substring(1);
+
+    if (multiFloor) {
+      if (!startFloor || !endFloor || parseInt(startFloor) > parseInt(endFloor)) {
+        wx.showToast({ title: '请输入有效的楼层范围', icon: 'none' });
+        return;
+      }
+      for (let floor = parseInt(startFloor); floor <= parseInt(endFloor); floor++) {
+        const newRoomNumber = floor + roomSuffix;
+        generatedRooms.push({
+          ...JSON.parse(JSON.stringify(room)), // Deep copy
+          roomNumber: newRoomNumber.toString(),
+          id: `temp_${newRoomNumber}`
+        });
       }
     } else {
-      // 单层生成
+      if (copyCount < 1) {
+        wx.showToast({ title: '请输入有效的复制数量', icon: 'none' });
+        return;
+      }
       for (let i = 1; i <= copyCount; i++) {
-        const newRoomNumber = baseRoomNumber + i
+        const newRoomNumber = baseRoomNumber + i;
         generatedRooms.push({
-          ...room,
+          ...JSON.parse(JSON.stringify(room)), // Deep copy
           roomNumber: newRoomNumber.toString(),
-          floor: Math.floor(newRoomNumber / 100),
           id: `temp_${newRoomNumber}`
-        })
+        });
       }
     }
-    
+
     this.setData({
       'copySettings.generatedRooms': generatedRooms
-    })
+    });
   },
 
   /**
    * 修改生成的房间信息
    */
-  editGeneratedRoom(event) {
-    const { index, field, value } = event.currentTarget.dataset
-    const generatedRooms = [...this.data.copySettings.generatedRooms]
-    
-    if (generatedRooms[index]) {
-      if (field.includes('.')) {
-        const fieldPath = field.split('.')
-        let current = generatedRooms[index]
-        for (let i = 0; i < fieldPath.length - 1; i++) {
-          current = current[fieldPath[i]]
-        }
-        current[fieldPath[fieldPath.length - 1]] = value
-      } else {
-        generatedRooms[index][field] = value
+  onGeneratedRoomFieldChange(event) {
+    const { index, field } = event.currentTarget.dataset;
+    const value = event.detail.value;
+    const generatedRooms = [...this.data.copySettings.generatedRooms];
+    const roomToUpdate = generatedRooms[index];
+
+    if (roomToUpdate) {
+      const fieldPath = field.split('.');
+      let current = roomToUpdate;
+      for (let i = 0; i < fieldPath.length - 1; i++) {
+        current = current[fieldPath[i]];
       }
-      
+      current[fieldPath[fieldPath.length - 1]] = value;
+
       this.setData({
         'copySettings.generatedRooms': generatedRooms
-      })
+      });
     }
   },
 

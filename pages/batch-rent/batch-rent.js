@@ -442,7 +442,7 @@ Page({
       const failedRooms = []
       
       results.forEach((result, index) => {
-        if (result.status === 'fulfilled' && result.value && result.value.code === 200) {
+        if (result.status === 'fulfilled') {
           successCount++
         } else {
           failedCount++

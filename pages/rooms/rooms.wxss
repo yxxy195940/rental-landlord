@@ -66,6 +66,47 @@
   border-top: 1px solid #ebedf0;
 }
 
+/* 批量出租提示 */
+.batch-rent-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #e6f8f0, #d4f7e6);
+  padding: 15px;
+  margin: 15px;
+  border-radius: 8px;
+  color: #07c160;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+}
+
+.banner-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.banner-subtitle {
+  font-size: 12px;
+}
+
+.banner-arrow {
+  font-size: 20px;
+  font-weight: bold;
+}
+
 /* 房间列表 */
 .room-list-scroll {
   flex: 1;
@@ -83,8 +124,8 @@
   transition: transform 0.2s;
 }
 
-.room-card-wrapper.delete-mode {
-  transform: translateX(-40px);
+.room-card-wrapper.delete-mode { 
+
 }
 
 .room-checkbox {

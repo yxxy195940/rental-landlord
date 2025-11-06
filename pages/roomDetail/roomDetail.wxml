@@ -9,7 +9,7 @@
     <button bindtap="loadRoomDetail" data-room-id="{{roomId}}">重试</button>
   </view>
 
-  <view wx:else="{{roomDetail}}" class="content">
+  <view wx:else class="content">
     <!-- 基本信息 -->
     <view class="info-section">
       <view class="section-header">
@@ -153,7 +153,7 @@
       <view class="secondary-actions">
         <button class="secondary-btn" bindtap="editRoom">
           <text class="btn-icon">⚙️</text>
-          <text class="btn-text">修改信息</text>
+          <text class="btn-text">修改费用信息</text>
         </button>
         <button class="secondary-btn" bindtap="viewMeterHistory" wx:if="{{roomDetail.status === 2}}">
           <text class="btn-icon">📊</text>

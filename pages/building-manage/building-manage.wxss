@@ -23,11 +23,16 @@
 }
 
 .building-card-wrapper.delete-mode {
-  transform: translateX(-40px);
+
 }
 
 .building-checkbox {
+  display: none;
   margin-right: 10px;
+}
+
+.delete-mode .building-checkbox {
+  display: block;
 }
 
 .building-card {

@@ -45,8 +45,8 @@
         "selectedIconPath": "images/room-active.png"
       },
       {
-        "pagePath": "pages/bills/bills",
-        "text": "账单",
+        "pagePath": "pages/meter/meter",
+        "text": "抄表",
         "iconPath": "images/bill.png",
         "selectedIconPath": "images/bill-active.png"
       },

@@ -1,66 +1,16 @@
 // pages/meter/meter.js
 Page({
+  data: {},
 
-  /**
-   * 页面的初始数据
-   */
-  data: {
+  onLoad() {},
 
+  // 跳转：批量抄表（沿用现有 meter-batch 页面）
+  goToBatchMeter() {
+    wx.navigateTo({ url: '/pages/meter-batch/meter-batch' });
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
+  // 跳转：退房抄表（跳转到已有退房登记页面）
+  goToCheckoutRegister() {
+    wx.navigateTo({ url: '/pages/checkout-register/checkout-register' });
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
-  }
-})
+});

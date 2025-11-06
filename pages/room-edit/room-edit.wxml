@@ -77,7 +77,7 @@
         
         <view class="form-row">
           <view class="form-group third">
-            <view class="form-label">电费单价</view>
+            <view class="form-label required">电费单价</view>
             <view class="input-with-unit">
               <input 
                 class="form-input"
@@ -92,7 +92,7 @@
           </view>
           
           <view class="form-group third">
-            <view class="form-label">水费单价</view>
+            <view class="form-label required">水费单价</view>
             <view class="input-with-unit">
               <input 
                 class="form-input"
@@ -280,27 +280,54 @@
         <view class="form-row">
           <view class="form-group half">
             <view class="form-label">复制数量</view>
-            <input 
-              class="form-input"
-              value="{{copySettings.copyCount}}"
-              placeholder="1"
-              type="number"
-              data-field="copySettings.copyCount"
-              bindinput="onCopyFieldChange"
-              bindconfirm="generateRoomList"
-            />
-          </view>
-          <view class="form-group half">
-            <view class="form-label">
-              <checkbox 
-                checked="{{copySettings.multiFloor}}"
-                data-field="copySettings.multiFloor"
-                data-value="{{!copySettings.multiFloor}}"
-                bindtap="onCopyFieldChange"
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{copySettings.copyCount}}"
+                placeholder="1"
+                type="number"
+                data-field="copySettings.copyCount"
+                bindinput="onCopyFieldChange"
+                bindconfirm="generateRoomList"
               />
-              多层生成
+              <text class="input-unit">间</text>
             </view>
           </view>
+          <view class="form-group half">
+            <view class="form-label">&nbsp;</view> <!-- Placeholder for alignment -->
+            <label class="checkbox-label">
+              <checkbox 
+                checked="{{copySettings.multiFloor}}"
+                bindchange="onMultiFloorChange"
+              />
+              <text>多层生成</text>
+            </label>
+          </view>
+        </view>
+
+        <view class="form-row" wx:if="{{copySettings.multiFloor}}">
+            <view class="form-group half">
+                <view class="form-label">起始楼层</view>
+                <input 
+                class="form-input"
+                value="{{copySettings.startFloor}}"
+                placeholder="如: 1"
+                type="number"
+                data-field="copySettings.startFloor"
+                bindinput="onCopyFieldChange"
+                />
+            </view>
+            <view class="form-group half">
+                <view class="form-label">结束楼层</view>
+                <input 
+                class="form-input"
+                value="{{copySettings.endFloor}}"
+                placeholder="如: 5"
+                type="number"
+                data-field="copySettings.endFloor"
+                bindinput="onCopyFieldChange"
+                />
+            </view>
         </view>
         
         <button class="generate-btn" bindtap="generateRoomList">生成房间列表</button>
@@ -319,8 +346,25 @@
             wx:key="id"
           >
             <view class="room-number">{{item.roomNumber}}室</view>
-            <view class="room-info">
-              <text>¥{{item.feeStandard.monthlyRent}}/月</text>
+            <view class="room-inputs">
+              <input 
+                class="list-input"
+                placeholder="月租金"
+                type="number"
+                value="{{item.feeStandard.monthlyRent}}"
+                data-index="{{index}}"
+                data-field="feeStandard.monthlyRent"
+                bindinput="onGeneratedRoomFieldChange"
+              />
+              <input 
+                class="list-input"
+                placeholder="押金"
+                type="number"
+                value="{{item.feeStandard.deposit}}"
+                data-index="{{index}}"
+                data-field="feeStandard.deposit"
+                bindinput="onGeneratedRoomFieldChange"
+              />
             </view>
           </view>
         </scroll-view>

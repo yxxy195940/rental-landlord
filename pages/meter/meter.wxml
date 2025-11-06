@@ -1,2 +1,23 @@
-<!--pages/meter/meter.wxml-->
-<text>pages/meter/meter.wxml</text>
+<view class="meter-page">
+  <view class="cell-group">
+    <view class="cell" hover-class="cell-hover" bindtap="goToBatchMeter">
+      <image class="cell-icon" src="/images/bill-active.svg" mode="aspectFit" />
+      <view class="cell-content">
+        <view class="cell-title">批量抄表</view>
+        <view class="cell-desc">按楼栋/房间批量录入水电</view>
+      </view>
+      <image class="cell-arrow" src="/images/arrow-down.svg" mode="aspectFit" />
+    </view>
+  </view>
+
+  <view class="cell-group">
+    <view class="cell" hover-class="cell-hover" bindtap="goToCheckoutRegister">
+      <image class="cell-icon" src="/images/room.svg" mode="aspectFit" />
+      <view class="cell-content">
+        <view class="cell-title">退房抄表</view>
+        <view class="cell-desc">办理退房登记并录入抄表</view>
+      </view>
+      <image class="cell-arrow" src="/images/arrow-down.svg" mode="aspectFit" />
+    </view>
+  </view>
+</view>

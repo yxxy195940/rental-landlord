@@ -1,138 +1,130 @@
 <!--pages/meter-batch/meter-batch.wxml-->
-<view class="page">
-  <!-- 顶部固定区域 -->
-  <view class="header-fixed">
+<view class="page-container" style="padding-top: {{headerHeight}}px;">
+  <!-- 顶部固定区域 (仅选择器) -->
+  <view id="header-fixed" class="header-fixed">
     <view class="selector-container">
       <!-- 抄表月份选择 -->
       <view class="selector-item">
         <text class="selector-label">抄表月份</text>
         <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="onMonthChange">
           <view class="picker-content">
-            <text class="picker-text">{{displayMonth}}</text>
+            <text class="picker-text">{{ displayMonth || '选择月份' }}</text>
             <text class="picker-arrow">▼</text>
           </view>
         </picker>
       </view>
-      
+
       <!-- 选择楼栋 -->
       <view class="selector-item">
         <text class="selector-label">选择楼栋</text>
-        <picker 
-          wx:if="{{buildings.length > 0}}"
-          class="building-picker"
-          bindchange="onBuildingChange" 
-          value="{{buildingIndex}}" 
-          range="{{buildings}}" 
-          range-key="name"
-        >
+        <picker mode="selector"
+                range="{{ buildings }}"
+                range-key="name"
+                value="{{ buildingIndex }}"
+                bindchange="onBuildingChange"
+                disabled="{{ buildings.length === 0 }}">
           <view class="picker-content">
-            <text class="picker-text">{{buildings.length > 0 ? buildings[buildingIndex].name : '请选择楼栋'}}</text>
+            <text class="picker-text">{{ buildings.length ? buildings[buildingIndex].name : '暂无楼栋' }}</text>
             <text class="picker-arrow">▼</text>
           </view>
         </picker>
       </view>
+
     </view>
+    
   </view>
-
-  <!-- 可滚动内容区 -->
-  <scroll-view 
-    scroll-y 
-    class="content-scroll"
-    style="padding-top: 120px;"
-    scroll-with-animation
-    enable-back-to-top
-    refresher-enabled
-    bindrefresherrefresh="onPullDownRefresh"
-    refresher-triggered="{{loading}}"
-  >
-    <view class="meter-container">
-      <!-- 统计信息卡片 -->
-      <view class="stats-card" wx:if="{{rooms.length > 0}}">
-        <view class="stats-info">
-          <text class="building-name">{{buildings[buildingIndex].name}} - {{rooms.length}}间待抄表房间</text>
-          <text class="stats-tip">输入本月水电表读数，系统将自动计算用量并生成账单</text>
-        </view>
-      </view>
-
-      <!-- 房间列表 -->
-      <view class="room-list">
-        <block wx:if="{{rooms.length > 0}}">
-          <view class="room-card" wx:for="{{rooms}}" wx:key="_id">
-            <!-- 房间头部 -->
-            <view class="room-header">
-              <view class="room-info">
-                <text class="room-number">{{item.roomName}}室</text>
-                <text class="tenant-name">{{item.tenantName || '未设置租客'}}</text>
+  <!-- 底部内容垫片, 防止被 bottom-bar 遮挡 -->
+  <view class="content-placeholder"></view>
+  <!-- Tabs 和 表单内容 (页面主体，可滚动) -->
+  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" type="card" color="#1989fa" sticky offset-top="{{ headerHeight }}">
+    <van-tab title="水表" name="water">
+      <view class="form-wrapper">
+        <view class="form-container">
+          <view class="form-header">
+            <text class="header-item room-number">房间号</text>
+            <text class="header-item last-reading">上期读数</text>
+            <text class="header-item current-reading">本期读数</text>
+          </view>
+          <view class="form-body">
+            <view class="form-row" wx:for="{{rooms}}" wx:key="_id">
+              <text class="cell-item room-number">{{item.roomName}}</text>
+              <view class="cell-item last-reading">
+                <text class="reading-value">{{item.lastMeterReading.water}}</text>
+                <text class="reading-time">{{ item.previousMeterTimeText || '--' }}</text>
               </view>
-              <view class="submission-status">
-                <text wx:if="{{submittingRooms.includes(item._id)}}" class="status-submitting">提交中...</text>
-                <text wx:elif="{{item.isMetered}}" class="status-completed">✓ 已抄表</text>
-                <text wx:else class="status-ready">待抄表</text>
-              </view>
-            </view>
-            
-            <!-- 水电表读数区域 - 横向排列 -->
-            <view class="meter-row {{item.isMetered ? 'completed-room' : ''}}">
-              <!-- 电表 -->
-              <view class="meter-item">
-                <view class="meter-header">
-                  <text class="meter-type">电表 (度)</text>
-                  <text class="last-reading">上次: <text class="last-reading-value">{{item.lastMeterReading.electricity}}</text></text>
-                </view>
-                <view class="input-group {{item.isMetered ? 'completed' : ''}}">
-                  <input 
-                    class="meter-input" 
-                    type="digit" 
-                    placeholder="本月读数" 
-                    data-room-id="{{item._id}}" 
-                    data-field="electricity"
-                    bindinput="onInputChange"
-                    bindblur="onInputBlur"
-                    adjust-position="{{true}}"
-                    cursor-spacing="50"
-                    disabled="{{submittingRooms.includes(item._id) || item.isMetered}}"
-                    value="{{meterReadings[item._id].electricity}}"
-                  />
-                </view>
-                <view wx:if="{{item.isMetered && item.electricityUsage !== undefined}}" class="usage-info">
-                  本月用电: <text class="usage-value">{{item.electricityUsage}}度</text>
-                </view>
-              </view>
-              
-              <!-- 水表 -->
-              <view class="meter-item">
-                <view class="meter-header">
-                  <text class="meter-type">水表 (吨)</text>
-                  <text class="last-reading">上次: <text class="last-reading-value">{{item.lastMeterReading.water}}</text></text>
-                </view>
-                <view class="input-group {{item.isMetered ? 'completed' : ''}}">
-                  <input 
-                    class="meter-input" 
-                    type="digit" 
-                    placeholder="本月读数" 
-                    data-room-id="{{item._id}}" 
+              <view class="cell-item current-reading">
+                <view class="reading-input">
+                  <van-field
+                    value="{{ item.currentMeterReading.water }}"
+                    type="digit"
+                    placeholder="输入读数"
+                    border="{{ false }}"
+                    input-align="center"
+                    bind:input="onInput"
+                    data-room-id="{{item._id}}"
                     data-field="water"
-                    bindinput="onInputChange"
-                    bindblur="onInputBlur"
-                    adjust-position="{{true}}"
-                    cursor-spacing="50"
-                    disabled="{{submittingRooms.includes(item._id) || item.isMetered}}"
-                    value="{{meterReadings[item._id].water}}"
                   />
                 </view>
-                <view wx:if="{{item.isMetered && item.waterUsage !== undefined}}" class="usage-info">
-                  本月用水: <text class="usage-value">{{item.waterUsage}}吨</text>
-                </view>
+                <text class="reading-time">{{ item.currentMeterTimeText || '--' }}</text>
               </view>
             </view>
           </view>
-        </block>
-        <view wx:else class="empty-state">
-          <view class="empty-icon">🏠</view>
-          <text class="empty-title">{{loading ? '加载中...' : '暂无待抄表房间'}}</text>
-          <text wx:if="{{!loading}}" class="empty-subtitle">请先在房间管理中添加并出租房间，或选择其他楼栋</text>
         </view>
       </view>
-    </view>
-  </scroll-view>
+    </van-tab>
+    <van-tab title="电表" name="electricity">
+      <view class="form-wrapper">
+        <view class="form-container">
+          <view class="form-header">
+            <text class="header-item room-number">房间号</text>
+            <text class="header-item last-reading">上期读数</text>
+            <text class="header-item current-reading">本期读数</text>
+          </view>
+          <view class="form-body">
+            <view class="form-row" wx:for="{{rooms}}" wx:key="_id">
+              <text class="cell-item room-number">{{item.roomName}}</text>
+              <view class="cell-item last-reading">
+                <text class="reading-value">{{item.lastMeterReading.electricity}}</text>
+                <text class="reading-time">{{ item.previousMeterTimeText || '--' }}</text>
+              </view>
+              <view class="cell-item current-reading">
+                <view class="reading-input">
+                  <van-field
+                    value="{{ item.currentMeterReading.electricity }}"
+                    type="digit"
+                    placeholder="输入读数"
+                    border="{{ false }}"
+                    input-align="center"
+                    bind:input="onInput"
+                    data-room-id="{{item._id}}"
+                    data-field="electricity"
+                  />
+                </view>
+                <text class="reading-time">{{ item.currentMeterTimeText || '--' }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </van-tab>
+  </van-tabs>
+
+  <!-- 加载中或空状态 -->
+  <view wx:if="{{loading}}" class="status-container">
+    <van-loading size="24px">加载中...</van-loading>
+  </view>
+  <view wx:if="{{!loading && rooms.length === 0}}" class="status-container">
+    <text>没有需要抄表的房间</text>
+  </view>
+
+  <!-- 底部内容垫片, 防止被 bottom-bar 遮挡 -->
+  <view class="content-placeholder"></view>
+
+  <!-- 底部固定操作栏 -->
+  <view class="bottom-bar">
+    <van-button type="default" block bind:click="onViewBills" class="view-bills-btn">查看账单</van-button>
+    <button class="action-btn primary-btn" bindtap="onSave">保存全部</button>
+  </view>
+
+  <van-toast id="van-toast" />
 </view>

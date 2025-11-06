@@ -112,44 +112,37 @@ Page({
     });
   },
 
-  // 生成账单图片
-  async generateBillImage() {
+  // 分享账单
+  async shareBill() {
     const { billDetail } = this.data;
-    
     if (!billDetail) return;
-    
+
+    wx.showLoading({ title: '生成账单中...' });
+
     try {
-      wx.showLoading({ title: '生成图片中...' });
-      
-      // 使用 Canvas 生成账单图片
       const canvasData = await this.createBillCanvas();
-      
-      // 保存图片到相册
-      wx.saveImageToPhotosAlbum({
-        filePath: canvasData.tempFilePath,
+      wx.hideLoading();
+
+      wx.showShareImageMenu({
+        path: canvasData.tempFilePath,
         success: () => {
-          wx.showToast({
-            title: '图片已保存到相册',
-            icon: 'success'
-          });
+          console.log('拉起转发成功');
         },
-        fail: (error) => {
-          console.error('保存图片失败:', error);
+        fail: (err) => {
+          console.error('拉起转发失败', err);
           wx.showToast({
-            title: '保存失败',
+            title: '无法分享',
             icon: 'none'
           });
         }
       });
-      
     } catch (error) {
+      wx.hideLoading();
       console.error('生成账单图片失败:', error);
       wx.showToast({
-        title: '生成失败',
+        title: '生成图片失败',
         icon: 'none'
       });
-    } finally {
-      wx.hideLoading();
     }
   },
 
@@ -228,10 +221,7 @@ Page({
     });
   },
 
-  // 分享账单
-  shareImage() {
-    this.generateBillImage();
-  },
+  
 
   // 下拉刷新
   onPullDownRefresh() {

@@ -1,66 +1,69 @@
 <!--pages/bills/bills.wxml-->
 <view class="page">
-  <!-- 顶部固定区域 -->
-  <view class="header-fixed">
-    <view class="selector-container">
-      <!-- 账单月份选择 -->
-      <view class="selector-item">
-        <text class="selector-label">账单月份</text>
-        <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="onMonthChange">
-          <view class="picker-content">
-            <text class="picker-text">{{displayMonth}}</text>
-            <text class="picker-arrow">▼</text>
-          </view>
-        </picker>
-      </view>
-      
-      <!-- 选择楼栋 -->
-      <view class="selector-item">
-        <text class="selector-label">选择楼栋</text>
-        <picker 
-          wx:if="{{buildingList.length > 0}}"
-          class="building-picker"
-          bindchange="onBuildingChange" 
-          value="{{selectedBuildingIndex}}" 
-          range="{{buildingList}}" 
-          range-key="name"
-        >
-          <view class="picker-content">
-            <text class="picker-text">{{currentBuilding.name || '请选择楼栋'}}</text>
-            <text class="picker-arrow">▼</text>
-          </view>
-        </picker>
-      </view>
-    </view>
-    
-    <!-- 搜索框 -->
-    <view class="search-bar-wrapper">
-      <view class="search-bar">
-        <icon class="search-icon" type="search" size="16"></icon>
-        <input 
-          class="search-input"
-          placeholder="搜索房间号" 
-          value="{{searchKeyword}}" 
-          bindinput="onSearchInput"
-          confirm-type="search"
-          bindconfirm="onSearchConfirm"
-        />
-      </view>
-    </view>
-  </view>
-
   <!-- 可滚动内容区 -->
   <scroll-view 
     scroll-y 
     class="content-scroll"
-    style="padding-top: 135px;"
+    style="padding-top: 0;"
     scroll-with-animation
     enable-back-to-top
-    refresher-enabled
-    bindrefresherrefresh="onPullDownRefresh"
-    refresher-triggered="{{loading}}"
     bindscrolltolower="loadMoreBills"
   >
+    <!-- 顶部选择与搜索模块（移入滚动区） -->
+    <view class="header-fixed">
+      <view class="selector-container">
+        <!-- 账单月份选择 -->
+        <view class="selector-item">
+          <text class="selector-label">账单月份</text>
+          <view>
+            <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="onMonthChange">
+              <view class="picker-content">
+                <text class="picker-text">{{displayMonth}}</text>
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+        </view>
+        
+        <!-- 选择楼栋 -->
+        <view class="selector-item">
+          <text class="selector-label">选择楼栋</text>
+          <view wx:if="{{buildingList.length > 0}}">
+            <picker 
+              class="building-picker"
+              bindchange="onBuildingChange" 
+              value="{{selectedBuildingIndex}}" 
+              range="{{buildingList}}" 
+              range-key="name"
+            >
+              <view class="picker-content">
+                <text class="picker-text">{{currentBuilding.name || '请选择楼栋'}}</text>
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+          <view wx:else class="picker-content">
+            <text class="picker-text">暂无楼栋</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 搜索框 -->
+      <view class="search-bar-wrapper">
+        <view class="search-bar">
+          <icon class="search-icon" type="search" size="16"></icon>
+          <input 
+            class="search-input"
+            placeholder="搜索房间号" 
+            value="{{searchKeyword}}" 
+            bindinput="onSearchInput"
+            confirm-type="search"
+            bindconfirm="onSearchConfirm"
+          />
+        </view>
+      </view>
+    </view>
+
     <view class="bill-list">
       <block wx:if="{{filteredBillList.length > 0}}">
         <view 

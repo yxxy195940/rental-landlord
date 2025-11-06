@@ -1,5 +1,5 @@
 {
   "navigationBarTitleText": "账单管理",
-  "enablePullDownRefresh": true,
+  "enablePullDownRefresh": false,
   "usingComponents": {}
 }

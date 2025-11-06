@@ -399,3 +399,21 @@ view, text, button, image, navigator, scroll-view {
   font-size: 0.8em;
   margin-right: 2rpx;
 }
+
+/* Custom TabBar Styles */
+.weui-tabbar, .wx-tab-bar {
+  height: 60px !important; /* Increase TabBar height */
+  padding-bottom: 5px; /* Add padding for safe area on iPhone */
+}
+
+.weui-tabbar__icon, .wx-tab-bar-icon {
+  width: 30px !important;   /* Increase icon width */
+  height: 30px !important;  /* Increase icon height */
+  margin-top: 2px !important; /* Adjust icon position */
+}
+
+.weui-tabbar__label, .wx-tab-bar-label {
+  font-weight: bold !important; /* Make font bold */
+  font-size: 11px !important;   /* Adjust font size for bold text */
+  margin-top: 2px !important;   /* Adjust label position */
+}
