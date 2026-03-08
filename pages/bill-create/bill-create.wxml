@@ -1,18 +1,17 @@
-<!--pages/billDetail/billDetail.wxml-->
+<!--pages/bill-create/bill-create.wxml-->
 <view class="page">
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-container">
     <text class="loading-text">加载中...</text>
   </view>
 
-  <!-- 账单详情 -->
+  <!-- 账单预览详情 -->
   <view wx:else class="bill-detail-container">
     <view wx:if="{{billDetail}}" class="bill-content">
       <!-- 头部信息 -->
       <view class="header-section">
         <view class="bill-title">{{billDetail.buildingName}} {{billDetail.roomNumber}}房账单</view>
-        <view wx:if="{{!isPreview}}" class="bill-no">账单编号: {{billDetail.billNo}}</view>
-        <view class="status-badge {{billDetail.status === 2 ? 'paid' : 'unpaid'}}">
+        <view class="status-badge unpaid">
           {{billDetail.statusText}}
         </view>
       </view>
@@ -103,7 +102,7 @@
         <view class="section-title">抄表信息</view>
         <view class="info-row">
           <text class="label">上次水表读数:</text>
-          <text class="value">{{billDetail.meterRecord.prevWaterReading === undefined ? '-' : billDetail.meterRecord.prevWaterReading}}</text>
+          <text class="value">{{billDetail.meterRecord.prevWaterReading === undefined ? "-" : billDetail.meterRecord.prevWaterReading}}</text>
         </view>
         <view class="info-row">
           <text class="label">本次水表读数:</text>
@@ -111,7 +110,7 @@
         </view>
         <view class="info-row">
           <text class="label">上次电表读数:</text>
-          <text class="value">{{billDetail.meterRecord.prevElectricityReading === undefined ? '-' : billDetail.meterRecord.prevElectricityReading}}</text>
+          <text class="value">{{billDetail.meterRecord.prevElectricityReading === undefined ? "-" : billDetail.meterRecord.prevElectricityReading}}</text>
         </view>
         <view class="info-row">
           <text class="label">本次电表读数:</text>
@@ -119,52 +118,20 @@
         </view>
       </view>
 
-      <!-- 支付信息 -->
-      <view wx:if="{{billDetail.status === 2}}" class="payment-section">
-        <view class="section-title">支付信息</view>
-        <view class="info-row">
-          <text class="label">实收金额:</text>
-          <text class="value paid-amount">¥{{billDetail.paidAmount}}</text>
-        </view>
-        <view class="info-row">
-          <text class="label">收款日期:</text>
-          <text class="value">{{billDetail.paidAt}}</text>
-        </view>
-      </view>
-
       <!-- 操作按钮 -->
       <view class="actions-section">
-        <!-- 预览模式下的按钮 -->
-        <block wx:if="{{isPreview}}">
-          <button class="action-btn secondary" bindtap="editRoomFee">
-            修改房间费用
-          </button>
-          <button class="action-btn primary" bindtap="confirmCreateBill">
-            确认开单
-          </button>
-        </block>
-        
-        <!-- 固化模式下的按钮 -->
-        <block wx:else>
-          <button wx:if="{{billDetail.status !== 2}}" class="action-btn primary" bindtap="markBillPaid">
-            标记收款
-          </button>
-          <button class="action-btn secondary" bindtap="shareBill">
-            分享账单图片
-          </button>
-          <button class="action-btn tertiary" bindtap="saveBillImage">
-            保存账单图片
-          </button>
-        </block>
+        <button class="action-btn secondary" bindtap="editRoomFee">
+          修改房间费用
+        </button>
+        <button class="action-btn primary" bindtap="confirmCreateBill">
+          确认开单
+        </button>
       </view>
     </view>
 
     <!-- 空状态 -->
     <view wx:else class="empty-state">
-      <text class="empty-text">账单不存在</text>
+      <text class="empty-text">账单不存在或无法预览</text>
     </view>
   </view>
-
-  <!-- 隐藏的Canvas用于生成图片 -->
-  <canvas canvas-id="billCanvas" style="width: 375px; height: 600px; position: fixed; top: -1000px; left: -1000px;"></canvas>
 </view>

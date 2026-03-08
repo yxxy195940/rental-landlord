@@ -63,6 +63,18 @@ page {
   transform: scale(0.8);
 }
 
+.picker-static {
+  justify-content: flex-start;
+  border: none;
+  background-color: transparent;
+  padding-left: 0;
+}
+
+.picker-static .picker-text {
+  font-weight: 600;
+  color: #323233;
+}
+
 /* --- 表单区域 --- */
 .form-wrapper {
   padding: 12px 16px 0;
@@ -117,40 +129,39 @@ page {
   font-weight: bold;
 }
 
+.current-reading {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
 .last-reading {
   flex: 2;
 }
 
-.current-reading {
+.last-time {
   flex: 3;
+  font-size: 13px;
+  color: #969799;
+  white-space: nowrap;
 }
 
 .current-reading .van-field {
   padding: 0;
 }
 
-/* 读数单元格：读数值 + 右侧时间 */
-.last-reading,
-.current-reading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.reading-value {
-  color: #323233;
-}
-
 .reading-input {
   flex: 1;
 }
 
-.reading-time {
-  margin-left: 8px;
-  white-space: nowrap;
-  color: #969799;
-  font-size: 12px;
+.header-item.last-reading {
+  flex: 2;
+}
+
+.header-item.last-time {
+  flex: 3;
 }
 
 /* 状态容器 */
@@ -200,22 +211,6 @@ page {
 /* 底部占位符 */
 .content-placeholder {
   height: 20px; /* 预估值, 和 bottom-bar 高度相关 */
-}
-
-/* --- 上期/本期最后抄表时间条 --- */
-.meter-timebar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 12px 10px;
-  color: #646566;
-  font-size: 12px;
-}
-
-.time-item {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
 }
 
 .time-label {

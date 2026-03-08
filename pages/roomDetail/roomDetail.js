@@ -8,6 +8,14 @@ Page({
     roomDetail: null,
     error: null,
     roomId: null,
+    
+    // 批量复制功能
+    showCopyDialog: false,
+    copySettings: {
+      copyCount: 1,
+      generatedRooms: []
+    },
+    baseRoomForCopy: null // 用于复制的基础房间数据
   },
 
   onLoad(options) {
@@ -129,9 +137,8 @@ Page({
    */
   getRoomStatusText(status) {
     const statusMap = {
-      1: '未登记',
-      2: '已出租', 
-      3: '维修中'
+      1: '空置',
+      2: '已出租'
     }
     return statusMap[status] || '未知'
   },
@@ -141,9 +148,8 @@ Page({
    */
   getRoomStatusIcon(status) {
     const iconMap = {
-      1: '🟡',
-      2: '🟢',
-      3: '🔧'
+      1: '🟢',
+      2: '🔴'
     }
     return iconMap[status] || '❓'
   },
@@ -167,12 +173,6 @@ Page({
           text: '退租登记', 
           type: 'danger',
           action: 'checkoutRegister'
-        }
-      case 3: // 维修中
-        return {
-          text: '完成维修',
-          type: 'success', 
-          action: 'finishMaintenance'
         }
       default:
         return null
@@ -312,6 +312,18 @@ Page({
   },
 
   /**
+   * 预览生成本月账单
+   */
+  previewCurrentBill() {
+    const roomId = this.data.roomId;
+    const now = new Date();
+    const billMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    wx.navigateTo({
+      url: `/pages/bill-create/bill-create?roomId=${roomId}&billMonth=${billMonth}`
+    });
+  },
+
+  /**
    * 编辑房间信息
    */
   editRoom() {
@@ -345,5 +357,209 @@ Page({
     wx.makePhoneCall({
       phoneNumber: phone
     })
+  },
+
+  // --- 批量复制功能 ---
+
+  /**
+   * 复制弹窗字段变化处理
+   */
+  onCopyFieldChange(event) {
+    const field = event.currentTarget.dataset.field
+    let value = event.detail ? event.detail.value : event.currentTarget.dataset.value
+    
+    if (field) {
+      this.setData({ [field]: value });
+    }
+  },
+
+  /**
+   * 显示批量复制对话框
+   */
+  showCopyDialog() {
+    const room = this.data.roomDetail;
+    if (!room) return;
+    
+    // 构造基础房间数据，用于复制
+    // 注意：这里构造的结构需要与 room-edit.js 中的 room 结构一致，特别是 feeStandard
+    const baseRoomForCopy = {
+      buildingId: room.buildingId,
+      buildingName: room.buildingName,
+      roomNumber: room.roomNumber,
+      feeStandard: {
+        monthlyRent: room.monthlyRent || '',
+        deposit: room.deposit || '',
+        electricityPrice: room.electricityPrice || '',
+        waterPrice: room.waterPrice || '',
+        internetFee: room.internetFee || '',
+        sanitationFee: room.sanitationFee || '',
+        managementFee: room.managementFee || '',
+        otherFee: room.otherFee || ''
+      },
+      remarks: room.remarks || '',
+      status: 1, // 默认为空置
+      isAvailable: true
+    };
+
+    this.setData({
+      showCopyDialog: true,
+      baseRoomForCopy: baseRoomForCopy,
+      copySettings: {
+        copyCount: 1,
+        generatedRooms: []
+      }
+    })
+  },
+
+  /**
+   * 关闭批量复制对话框
+   */
+  closeCopyDialog() {
+    this.setData({
+      showCopyDialog: false,
+      baseRoomForCopy: null
+    })
+  },
+
+  /**
+   * 阻止事件冒泡
+   */
+  stopPropagation() {
+    // 什么都不做，只是阻止事件冒泡
+  },
+
+  /**
+   * 生成批量房间列表
+   */
+  generateRoomList() {
+    const room = this.data.baseRoomForCopy;
+    const { copySettings } = this.data;
+    const { copyCount } = copySettings;
+    
+    if (!room) return;
+
+    const baseRoomNumberStr = room.roomNumber ? String(room.roomNumber) : '';
+    const generatedRooms = [];
+    
+    if (!baseRoomNumberStr || !/^\d+$/.test(baseRoomNumberStr)) {
+      wx.showToast({ title: '原房间号格式不正确', icon: 'none' });
+      return;
+    }
+
+    const baseRoomNumber = parseInt(baseRoomNumberStr);
+    
+    if (copyCount < 1) {
+      wx.showToast({ title: '请输入有效的复制数量', icon: 'none' });
+      return;
+    }
+    for (let i = 1; i <= copyCount; i++) {
+      const newRoomNumber = baseRoomNumber + i;
+      generatedRooms.push({
+        ...JSON.parse(JSON.stringify(room)), // Deep copy
+        roomNumber: newRoomNumber.toString(),
+        id: `temp_${newRoomNumber}`
+      });
+    }
+
+    this.setData({
+      'copySettings.generatedRooms': generatedRooms
+    });
+  },
+
+  /**
+   * 修改生成的房间信息
+   */
+  onGeneratedRoomFieldChange(event) {
+    const { index, field } = event.currentTarget.dataset;
+    const value = event.detail.value;
+    const generatedRooms = [...this.data.copySettings.generatedRooms];
+    const roomToUpdate = generatedRooms[index];
+
+    if (roomToUpdate) {
+      const fieldPath = field.split('.');
+      let current = roomToUpdate;
+      for (let i = 0; i < fieldPath.length - 1; i++) {
+        current = current[fieldPath[i]];
+      }
+      current[fieldPath[fieldPath.length - 1]] = value;
+
+      this.setData({
+        'copySettings.generatedRooms': generatedRooms
+      });
+    }
+  },
+
+  /**
+   * 格式化房间数据用于保存
+   */
+  formatRoomData(room) {
+    return {
+      buildingId: room.buildingId,
+      buildingName: room.buildingName,
+      roomNumber: room.roomNumber,
+      feeStandard: {
+        monthlyRent: parseFloat(room.feeStandard.monthlyRent) || 0,
+        deposit: parseFloat(room.feeStandard.deposit) || 0,
+        electricityPrice: parseFloat(room.feeStandard.electricityPrice) || 0.8,
+        waterPrice: parseFloat(room.feeStandard.waterPrice) || 4.5,
+        internetFee: parseFloat(room.feeStandard.internetFee) || 0,
+        sanitationFee: parseFloat(room.feeStandard.sanitationFee) || 0,
+        managementFee: parseFloat(room.feeStandard.managementFee) || 0,
+        otherFee: parseFloat(room.feeStandard.otherFee) || 0
+      },
+      remarks: room.remarks || '',
+      status: room.status || 1,
+      isAvailable: room.isAvailable !== false
+    }
+  },
+
+  /**
+   * 批量保存房间
+   */
+  async batchSaveRooms() {
+    const { copySettings } = this.data
+    const { generatedRooms } = copySettings
+    
+    if (generatedRooms.length === 0) {
+      wx.showToast({
+        title: '没有要保存的房间',
+        icon: 'none'
+      })
+      return
+    }
+    
+    try {
+      this.setData({ saving: true })
+      wx.showLoading({ title: '保存中...' })
+      
+      // 批量保存复制的房间
+      const batchResponse = await request.request({
+        cloudFunc: 'room',
+        data: {
+          action: 'batchCreate',
+          roomList: generatedRooms.map(r => this.formatRoomData(r))
+        }
+      })
+      
+      wx.hideLoading()
+      
+      if (batchResponse) {
+        wx.showToast({
+          title: `成功创建${generatedRooms.length}个房间`,
+          icon: 'success'
+        })
+        
+        this.closeCopyDialog()
+      }
+    } catch (error) {
+      wx.hideLoading()
+      console.error('批量保存房间失败:', error)
+      wx.showToast({
+        title: '保存失败',
+        icon: 'none'
+      })
+    } finally {
+      this.setData({ saving: false })
+    }
   }
 });

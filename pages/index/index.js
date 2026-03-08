@@ -40,8 +40,10 @@ Page({
         },
       });
 
-      if (response && response.code === 200) {
-        const stats = response.data;
+      // 修复：兼容 request 返回 data 负载或完整 response 的情况
+      const stats = response?.code === 200 ? response.data : response;
+      
+      if (stats) {
         this.setData({
           'monthlyStats.totalBills': stats.totalBills || 0,
           'monthlyStats.paidBills': stats.paidBills || 0,

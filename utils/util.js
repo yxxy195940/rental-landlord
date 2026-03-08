@@ -485,10 +485,10 @@ export const businessUtils = {
    */
   getRoomStatusText(status) {
     const statusMap = {
-      0: '空置',
-      1: '已租',
-      2: '维修',
-      3: '停租'
+      1: '空置',
+      2: '已租',
+      // 兼容旧数据：0 也视为空置
+      0: '空置'
     }
     return statusMap[status] || '未知'
   },
@@ -500,10 +500,9 @@ export const businessUtils = {
    */
   getRoomStatusTagType(status) {
     const typeMap = {
-      0: 'info',      // 空置 - 蓝色
-      1: 'success',   // 已租 - 绿色
-      2: 'warning',   // 维修 - 橙色
-      3: 'error'      // 停租 - 红色
+      1: 'info',      // 空置
+      2: 'success',   // 已租
+      0: 'info'       // 兼容旧数据
     }
     return typeMap[status] || 'info'
   },

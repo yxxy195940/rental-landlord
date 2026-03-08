@@ -185,7 +185,7 @@
         <text class="tips-item">• 已选择 {{selectedCount}} 间房间</text>
         <text class="tips-item">• 点击房间名称可展开/收起表单</text>
         <text class="tips-item">• 点击复选框可取消勾选房间</text>
-        <text class="tips-item">• 水表和电表读数为必填项</text>
+        <text class="tips-item">• 初始水表和电表读数为必填项</text>
       </view>
     </view>
     

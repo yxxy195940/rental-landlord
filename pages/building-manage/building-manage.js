@@ -80,7 +80,7 @@ Page({
           try {
             await request.request({
               cloudFunc: 'building',
-              data: { action: 'batchDelete', buildingIds: selectedBuildings },
+              data: { action: 'delete', buildingIds: selectedBuildings },
             });
             wx.hideLoading();
             wx.showToast({ title: '删除成功' });
@@ -140,9 +140,21 @@ Page({
         data: { action, buildingId: buildingForm.id, buildingData: buildingForm },
       });
       wx.hideLoading();
-      wx.showToast({ title: '保存成功' });
       this.setData({ showDialog: false });
-      this.loadBuildings();
+      
+      wx.showModal({
+        title: '成功',
+        content: '保存成功！前往房间管理？',
+        success: (res) => {
+          if (res.confirm) {
+            wx.switchTab({
+              url: '/pages/rooms/rooms',
+            });
+          } else {
+            this.loadBuildings();
+          }
+        }
+      });
     } catch (error) {
       wx.hideLoading();
       wx.showToast({ title: '保存失败', icon: 'none' });

@@ -1,9 +1,11 @@
 // pages/my/my.js
 const app = getApp()
+import { config, updateConfig } from '../../utils/config'
 
 Page({
   data: {
     userInfo: {},
+    useCloud: config.useCloud,
   },
 
   onLoad() {
@@ -16,7 +18,8 @@ Page({
   onShow() {
     const userInfo = wx.getStorageSync('userInfo') || {};
     this.setData({
-      userInfo
+      userInfo,
+      useCloud: config.useCloud
     });
   },
 
@@ -71,6 +74,16 @@ Page({
   tapShare() {
     // 顶部右上角菜单可分享；此处给出提示
     wx.showToast({ title: '请使用右上角菜单分享', icon: 'none' });
+  },
+
+  onToggleUseCloud(e) {
+    const value = e.detail.value;
+    updateConfig('useCloud', value);
+    this.setData({ useCloud: value });
+    wx.showToast({
+      title: value ? '已切换云函数模式' : '已切换 API 模式',
+      icon: 'none'
+    });
   },
 
   onShareAppMessage() {

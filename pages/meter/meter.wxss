@@ -37,14 +37,14 @@
 }
 
 .cell-title {
-  font-size: 32rpx;
+  font-size: 34rpx;
   color: #323233;
   font-weight: 600;
 }
 
 .cell-desc {
   margin-top: 6rpx;
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #969799;
 }
 
@@ -54,4 +54,3 @@
   transform: rotate(-90deg);
   opacity: 0.6;
 }
-

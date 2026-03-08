@@ -11,11 +11,11 @@
   </view>
 
   <view class="cell-group">
-    <view class="cell" hover-class="cell-hover" bindtap="goToCheckoutRegister">
+    <view class="cell" hover-class="cell-hover" bindtap="goToMeterHistory">
       <image class="cell-icon" src="/images/room.svg" mode="aspectFit" />
       <view class="cell-content">
-        <view class="cell-title">退房抄表</view>
-        <view class="cell-desc">办理退房登记并录入抄表</view>
+        <view class="cell-title">抄表记录</view>
+        <view class="cell-desc">按楼栋/房间查看历史水电记录</view>
       </view>
       <image class="cell-arrow" src="/images/arrow-down.svg" mode="aspectFit" />
     </view>

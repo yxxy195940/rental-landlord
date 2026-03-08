@@ -222,8 +222,6 @@ Page({
       return
     }
     
-    console.log('字段变化:', field, value)
-    
     const fieldPath = field.split('.')
     const newRoom = { ...this.data.room }
     

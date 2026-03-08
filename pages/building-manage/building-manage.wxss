@@ -110,3 +110,11 @@
 .dialog-content {
   padding: 20px;
 }
+
+.page-tip {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}

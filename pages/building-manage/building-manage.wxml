@@ -23,6 +23,7 @@
     <view wx:if="{{buildings.length === 0}}" class="empty-list">
       <text>暂无楼栋信息</text>
     </view>
+    <view class="page-tip">房间需要在关联在楼栋下</view>
   </scroll-view>
 
   <view class="footer-actions">

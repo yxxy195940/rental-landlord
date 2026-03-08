@@ -29,6 +29,16 @@ Page({
     depositRefund: '',
     finalBillAmount: '',
     actualRefund: '',
+    waterUsage: '',
+    electricityUsage: '',
+    waterAmount: '',
+    electricityAmount: '',
+    rentAmount: '',
+    sanitationFee: '',
+    managementFee: '',
+    otherFee: '',
+    internetFee: '',
+    totalAmount: '',
     
     // 表单验证
     errors: {}
@@ -70,8 +80,13 @@ Page({
           roomInfo: res,
           finalWaterReading: res.lastWaterReading || '',
           finalElectricityReading: res.lastElectricityReading || '',
-          depositRefund: res.deposit || ''
+          depositRefund: res.deposit || '',
+          rentAmount: res.monthlyRent || '',
+          sanitationFee: res.sanitationFee || res.cleaningAmount || 0,
+          managementFee: res.managementFee || 0,
+          otherFee: res.otherFee || 0
         })
+        this.calculateCharges()
         
         wx.setNavigationBarTitle({
           title: `${res.roomNumber}室 - 退租登记`
@@ -118,6 +133,10 @@ Page({
     if (field === 'depositRefund' || field === 'finalBillAmount') {
       this.calculateActualRefund()
     }
+
+    if (['finalWaterReading', 'finalElectricityReading'].includes(field)) {
+      this.calculateCharges()
+    }
   },
 
   /**
@@ -156,6 +175,51 @@ Page({
     this.setData({
       actualRefund: actual.toString()
     })
+  },
+
+  /**
+   * 根据抄表和房间单价计算费用
+   */
+  calculateCharges() {
+    const { roomInfo, finalWaterReading, finalElectricityReading } = this.data
+    if (!roomInfo) return
+
+    const startWater = parseFloat(roomInfo.lastWaterReading) || 0
+    const startElec = parseFloat(roomInfo.lastElectricityReading) || 0
+    const endWater = parseFloat(finalWaterReading)
+    const endElec = parseFloat(finalElectricityReading)
+
+    const validWater = !isNaN(endWater) && endWater >= 0
+    const validElec = !isNaN(endElec) && endElec >= 0
+
+    const waterUsage = validWater ? Math.max(0, endWater - startWater) : 0
+    const electricityUsage = validElec ? Math.max(0, endElec - startElec) : 0
+
+    const waterAmount = Number((waterUsage * (roomInfo.waterPrice || 0)).toFixed(2))
+    const electricityAmount = Number((electricityUsage * (roomInfo.electricityPrice || 0)).toFixed(2))
+    const rentAmount = parseFloat(roomInfo.monthlyRent) || 0
+    const sanitationFee = parseFloat(roomInfo.sanitationFee || roomInfo.cleaningAmount || 0) || 0
+    const managementFee = parseFloat(roomInfo.managementFee || 0) || 0
+    const otherFee = parseFloat(roomInfo.otherFee || 0) || 0
+    const internetFee = parseFloat(roomInfo.internetFee || 0) || 0
+
+    const totalAmount = Number((rentAmount + waterAmount + electricityAmount + sanitationFee + managementFee + otherFee + internetFee).toFixed(2))
+
+    this.setData({
+      waterUsage: waterUsage.toString(),
+      electricityUsage: electricityUsage.toString(),
+      waterAmount: waterAmount.toString(),
+      electricityAmount: electricityAmount.toString(),
+      rentAmount: rentAmount.toString(),
+      sanitationFee: sanitationFee.toString(),
+      managementFee: managementFee.toString(),
+      otherFee: otherFee.toString(),
+      totalAmount: totalAmount.toString(),
+      internetFee: internetFee.toString(),
+      finalBillAmount: totalAmount.toString()
+    })
+
+    this.calculateActualRefund()
   },
 
   /**
@@ -224,7 +288,17 @@ Page({
         meterDate,
         depositRefund,
         finalBillAmount,
-        actualRefund
+        actualRefund,
+        waterUsage,
+        electricityUsage,
+        waterAmount,
+        electricityAmount,
+        rentAmount,
+        sanitationFee,
+        managementFee,
+        otherFee,
+        internetFee,
+        totalAmount
       } = this.data
       
       // 调用退租登记云函数
@@ -235,7 +309,10 @@ Page({
           roomId: roomId,
           checkoutDate: checkoutDate,
           checkoutReason: checkoutReason,
-          remark: remark || ''
+          remark: remark || '',
+          finalWaterReading: finalWaterReading ? parseFloat(finalWaterReading) : null,
+          finalElectricityReading: finalElectricityReading ? parseFloat(finalElectricityReading) : null,
+          meterDate: meterDate || null
         }
       })
       
@@ -243,18 +320,66 @@ Page({
         // 如果填写了水电表读数，更新最终读数
         if (finalWaterReading || finalElectricityReading) {
           try {
-            await request.request({
-              cloudFunc: 'room',
-              data: {
-                action: 'recordMeter',
-                roomId: roomId,
-                waterReading: parseFloat(finalWaterReading) || 0,
-                electricityReading: parseFloat(finalElectricityReading) || 0
-              }
-            })
+            const meterPayload = {
+              action: 'recordMeter',
+              roomId,
+              meterDate: meterDate || null
+            }
+            
+            const hasValidWater = finalWaterReading !== '' && !isNaN(parseFloat(finalWaterReading))
+            const hasValidElectricity = finalElectricityReading !== '' && !isNaN(parseFloat(finalElectricityReading))
+            
+            if (hasValidWater) {
+              meterPayload.waterReading = parseFloat(finalWaterReading)
+            }
+            if (hasValidElectricity) {
+              meterPayload.electricityReading = parseFloat(finalElectricityReading)
+            }
+            
+            if (meterPayload.waterReading !== undefined || meterPayload.electricityReading !== undefined) {
+              await request.request({
+                cloudFunc: 'room',
+                data: meterPayload
+              })
+            }
           } catch (meterError) {
             console.error('更新最终表读数失败:', meterError)
           }
+        }
+
+        // 自动生成结算账单
+        try {
+          const billMonth = checkoutDate ? checkoutDate.slice(0, 7) : ''
+          await request.request({
+            cloudFunc: 'bill',
+            data: {
+              action: 'create',
+              billData: {
+                roomId,
+                billMonth,
+                rentAmount: parseFloat(rentAmount) || 0,
+                waterAmount: parseFloat(waterAmount) || 0,
+                electricityAmount: parseFloat(electricityAmount) || 0,
+                cleaningAmount: parseFloat(sanitationFee) || 0,
+                otherDetails: [
+                  { name: '管理费', amount: parseFloat(managementFee) || 0 },
+                  { name: '网费', amount: parseFloat(internetFee) || 0 },
+                  { name: '其他', amount: parseFloat(otherFee) || 0 }
+                ],
+                totalAmount: parseFloat(totalAmount) || parseFloat(finalBillAmount) || 0,
+                waterUsage: parseFloat(waterUsage) || 0,
+                electricityUsage: parseFloat(electricityUsage) || 0,
+                checkoutDate,
+                remark
+              }
+            }
+          })
+        } catch (billError) {
+          console.error('生成退租账单失败:', billError)
+          wx.showToast({
+            title: '退租成功，账单生成失败',
+            icon: 'none'
+          })
         }
         
         wx.showToast({

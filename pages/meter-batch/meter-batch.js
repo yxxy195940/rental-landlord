@@ -4,25 +4,22 @@ import Toast from '../../miniprogram_npm/@vant/weapp/toast/toast';
 
 Page({
   data: {
-    selectedMonth: '',
-    displayMonth: '',
+    currentMonth: '',
+    currentMonthDisplay: '',
     buildings: [],
     buildingIndex: 0,
     rooms: [],
     loading: false,
     activeTab: 'water', // 'water' or 'electricity'
-    headerHeight: 0,
-    // 新增：上期/本期最后抄表时间（整栋）
-    previousLastTime: '',
-    currentLastTime: '',
+    headerHeight: 0
   },
 
   onReady: function() {
     this.measureHeader();
   },
 
-onLoad: function (options) {
-    this.initCurrentMonth();
+  onLoad: function () {
+    this.setCurrentMonth();
     this.loadBuildingList();
   },
 
@@ -48,32 +45,28 @@ onLoad: function (options) {
     });
   },
 
-  initCurrentMonth() {
+  setCurrentMonth() {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
-    const selectedMonth = `${year}-${month}`;
-    const displayMonth = `${year}年${month}月`;
-    
     this.setData({
-      selectedMonth,
-      displayMonth
+      currentMonth: `${year}-${month}`,
+      currentMonthDisplay: `${year}年${month}月`
     });
   },
 
-  onMonthChange(e) {
-    const selectedMonth = e.detail.value;
-    const [year, month] = selectedMonth.split('-');
-    const displayMonth = `${year}年${month}月`;
-    
-    this.setData({
-      selectedMonth,
-      displayMonth
-    });
-    
-    if (this.data.buildings.length > 0) {
-      this.loadRoomsForBuilding(this.data.buildings[this.data.buildingIndex].id);
+  ensureCurrentMonth() {
+    if (!this.data.currentMonth) {
+      this.setCurrentMonth();
     }
+    return this.data.currentMonth;
+  },
+
+  getPreviousMonth(monthStr) {
+    const [year, month] = monthStr.split('-').map(n => parseInt(n, 10));
+    const date = new Date(year, month - 1, 1);
+    date.setMonth(date.getMonth() - 1);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   },
 
   async loadBuildingList() {
@@ -109,60 +102,56 @@ onLoad: function (options) {
     try {
       this.setData({ loading: true });
       
-      const { selectedMonth } = this.data;
-      const [year, month] = selectedMonth.split('-');
-      
-      const currentDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-      const previousDate = new Date(new Date(currentDate).setMonth(currentDate.getMonth() - 1));
-      const previousMonth = `${previousDate.getFullYear()}-${String(previousDate.getMonth() + 1).padStart(2, '0')}`;
+      const currentMonth = this.ensureCurrentMonth();
+      const [year, month] = currentMonth.split('-');
+      const previousMonth = this.getPreviousMonth(currentMonth);
 
       const res = await request.request({
         cloudFunc: 'meter',
         data: {
           action: 'getRoomsForBatchMeter',
           buildingId: buildingId,
-          currentMonth: selectedMonth,
+          currentMonth: currentMonth,
           previousMonth: previousMonth
         }
       });
 
       const rooms = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
 
-      // 计算整栋“最后抄表时间”（取各自月份的最大时间）
-      let prevMax = 0;
-      let currMax = 0;
       const roomsWithText = rooms.map(r => {
-        // 规范化和格式化时间文本
-        const prevTs = r.previousMeterTime ? new Date(r.previousMeterTime).getTime() : 0;
-        const currTs = r.currentMeterTime ? new Date(r.currentMeterTime).getTime() : 0;
-        const previousMeterTimeText = prevTs ? dateUtils.format(prevTs, 'YYYY-MM-DD HH:mm') : '';
-        const currentMeterTimeText = currTs ? dateUtils.format(currTs, 'YYYY-MM-DD HH:mm') : '';
+        const lastMeterReading = r.lastMeterReading || {};
+        const prevWaterTs = r.previousMeterTime?.water ? new Date(r.previousMeterTime.water).getTime() : 0;
+        const prevElectricityTs = r.previousMeterTime?.electricity ? new Date(r.previousMeterTime.electricity).getTime() : 0;
+        
+        const unbilledWater = r.currentMeterReading?.water;
+        const unbilledElectricity = r.currentMeterReading?.electricity;
 
-        // 汇总最大时间
-        if (prevTs && !isNaN(prevTs)) prevMax = Math.max(prevMax, prevTs);
-        if (currTs && !isNaN(currTs)) currMax = Math.max(currMax, currTs);
-
-        return { ...r, previousMeterTimeText, currentMeterTimeText };
+        return {
+          ...r,
+          lastMeterReading: {
+            water: lastMeterReading.water ?? '--',
+            electricity: lastMeterReading.electricity ?? '--'
+          },
+          previousMeterTimeTextWater: prevWaterTs ? dateUtils.format(prevWaterTs, 'YYYY-MM-DD HH:mm') : '',
+          previousMeterTimeTextElectricity: prevElectricityTs ? dateUtils.format(prevElectricityTs, 'YYYY-MM-DD HH:mm') : '',
+          currentMeterReading: {
+            water: unbilledWater !== undefined && unbilledWater !== '' ? String(unbilledWater) : '',
+            electricity: unbilledElectricity !== undefined && unbilledElectricity !== '' ? String(unbilledElectricity) : ''
+          },
+          // 标记是否存在未开单数据以及是否允许编辑
+          unbilled: {
+            water: unbilledWater !== undefined && unbilledWater !== '' ? String(unbilledWater) : '',
+            electricity: unbilledElectricity !== undefined && unbilledElectricity !== '' ? String(unbilledElectricity) : ''
+          },
+          canEdit: {
+            water: !(unbilledWater !== undefined && unbilledWater !== ''),
+            electricity: !(unbilledElectricity !== undefined && unbilledElectricity !== '')
+          }
+        };
       });
-
-      roomsWithText.forEach(r => {
-        if (r.previousMeterTime) {
-          const t = new Date(r.previousMeterTime).getTime();
-          if (!isNaN(t)) prevMax = Math.max(prevMax, t);
-        }
-        if (r.currentMeterTime) {
-          const t = new Date(r.currentMeterTime).getTime();
-          if (!isNaN(t)) currMax = Math.max(currMax, t);
-        }
-      });
-
-      const previousLastTime = prevMax ? dateUtils.format(prevMax, 'YYYY-MM-DD HH:mm') : '';
-      const currentLastTime = currMax ? dateUtils.format(currMax, 'YYYY-MM-DD HH:mm') : '';
 
       this.setData({
-        rooms: roomsWithText,
-        previousLastTime,
-        currentLastTime,
+        rooms: roomsWithText
       });
 
     } catch (error) {
@@ -195,36 +184,103 @@ onLoad: function (options) {
     });
   },
 
+  onFieldClick(e) {
+    const { roomId, field } = e.currentTarget.dataset;
+    const roomIndex = this.data.rooms.findIndex(r => r._id === roomId);
+
+    if (roomIndex === -1) return;
+
+    const room = this.data.rooms[roomIndex];
+    if (!room.canEdit[field]) {
+      const unbilledValue = room.unbilled[field];
+      wx.showModal({
+        title: '提示',
+        content: `已存在未开单读数 ${unbilledValue}，是否更新？`,
+        success: (res) => {
+          if (res.confirm) {
+            this.setData({
+              [`rooms[${roomIndex}].canEdit.${field}`]: true
+            });
+          }
+        }
+      });
+    }
+  },
+
   async onSave() {
-    const { rooms, selectedMonth } = this.data;
-    if (!selectedMonth) {
-      Toast.fail('请先选择月份');
-      return;
-    }
+    const { rooms, activeTab } = this.data;
+    const currentMonth = this.ensureCurrentMonth();
+    const [year, month] = currentMonth.split('-');
 
-    const [year, month] = selectedMonth.split('-');
-
-    // 支持单项（只填水或只填电）也可以保存
     const meterReadings = [];
-    rooms.forEach(room => {
-      const waterReading = parseFloat(room.currentMeterReading.water);
-      const electricityReading = parseFloat(room.currentMeterReading.electricity);
+    let hasError = false;
+    let errorMessage = '';
 
-      const payload = { roomId: room._id, year, month };
-      if (!isNaN(waterReading)) payload.waterReading = waterReading;
-      if (!isNaN(electricityReading)) payload.electricityReading = electricityReading;
-
-      if (payload.waterReading !== undefined || payload.electricityReading !== undefined) {
-        meterReadings.push(payload);
+    if (activeTab === 'water') {
+      for (const room of rooms) {
+        const strVal = room.currentMeterReading.water;
+        if (strVal === undefined || strVal === '') continue;
+        
+        const waterReading = parseFloat(strVal);
+        const lastWater = parseFloat(room.lastMeterReading.water) || 0;
+        
+        if (!isNaN(waterReading)) {
+          if (waterReading < lastWater) {
+            hasError = true;
+            errorMessage = `${room.roomName}水表不能小于上期(${lastWater})`;
+            break;
+          }
+          meterReadings.push({
+            roomId: room._id,
+            year,
+            month,
+            meterType: 'water',
+            waterReading: waterReading
+          });
+        }
       }
-    });
-
-    if (meterReadings.length === 0) {
-      Toast('没有需要保存的有效读数');
-      return;
+      if (hasError) {
+        Toast(errorMessage);
+        return;
+      }
+      if (meterReadings.length === 0) {
+        Toast('没有需要保存的水表读数');
+        return;
+      }
+    } else {
+      for (const room of rooms) {
+        const strVal = room.currentMeterReading.electricity;
+        if (strVal === undefined || strVal === '') continue;
+        
+        const electricityReading = parseFloat(strVal);
+        const lastElectricity = parseFloat(room.lastMeterReading.electricity) || 0;
+        
+        if (!isNaN(electricityReading)) {
+          if (electricityReading < lastElectricity) {
+            hasError = true;
+            errorMessage = `${room.roomName}电表不能小于上期(${lastElectricity})`;
+            break;
+          }
+          meterReadings.push({
+            roomId: room._id,
+            year,
+            month,
+            meterType: 'electricity',
+            electricityReading: electricityReading
+          });
+        }
+      }
+      if (hasError) {
+        Toast(errorMessage);
+        return;
+      }
+      if (meterReadings.length === 0) {
+        Toast('没有需要保存的电表读数');
+        return;
+      }
     }
 
-    Toast.loading({ message: '保存中...', forbidClick: true, duration: 0 });
+    wx.showLoading({ title: '保存中...', mask: true });
 
     try {
       await request.request({
@@ -235,12 +291,14 @@ onLoad: function (options) {
         }
       });
 
+      wx.hideLoading();
       Toast.success('保存成功');
       // Optionally, refresh the data
       this.loadRoomsForBuilding(this.data.buildings[this.data.buildingIndex].id);
 
     } catch (error) {
       console.error('批量保存抄表数据失败:', error);
+      wx.hideLoading();
       Toast.fail('保存失败');
     }
   },

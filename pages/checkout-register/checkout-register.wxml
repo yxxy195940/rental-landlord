@@ -162,9 +162,41 @@
       <view class="section-header">
         <text class="section-icon">💰</text>
         <text class="section-title">费用结算</text>
-        <text class="section-subtitle">(可选)</text>
+        <text class="section-subtitle">自动根据抄表和月租计算</text>
       </view>
       <view class="form-card">
+        <view class="fee-line">
+          <text class="fee-label">房租</text>
+          <text class="fee-value">¥{{rentAmount || 0}}</text>
+        </view>
+        <view class="fee-line">
+          <text class="fee-label">水费 ({{waterUsage || 0}} 吨 × ¥{{roomInfo.waterPrice || 0}})</text>
+          <text class="fee-value">¥{{waterAmount || 0}}</text>
+        </view>
+        <view class="fee-line">
+          <text class="fee-label">电费 ({{electricityUsage || 0}} 度 × ¥{{roomInfo.electricityPrice || 0}})</text>
+          <text class="fee-value">¥{{electricityAmount || 0}}</text>
+        </view>
+        <view class="fee-line" wx:if="{{sanitationFee}}">
+          <text class="fee-label">卫生费</text>
+          <text class="fee-value">¥{{sanitationFee}}</text>
+        </view>
+        <view class="fee-line" wx:if="{{managementFee}}">
+          <text class="fee-label">管理费</text>
+          <text class="fee-value">¥{{managementFee}}</text>
+        </view>
+        <view class="fee-line" wx:if="{{internetFee}}">
+          <text class="fee-label">网费</text>
+          <text class="fee-value">¥{{internetFee}}</text>
+        </view>
+        <view class="fee-line" wx:if="{{otherFee}}">
+          <text class="fee-label">其他</text>
+          <text class="fee-value">¥{{otherFee}}</text>
+        </view>
+        <view class="fee-total">
+          <text class="fee-total-label">本次应收</text>
+          <text class="fee-total-value">¥{{totalAmount || 0}}</text>
+        </view>
         <view class="form-row">
           <view class="form-item">
             <text class="label">押金退还</text>

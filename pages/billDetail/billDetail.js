@@ -16,7 +16,7 @@ Page({
       this.loadBillDetail();
     } else {
       wx.showToast({
-        title: '账单ID不能为空',
+        title: '缺少账单参数',
         icon: 'none'
       });
       setTimeout(() => {
@@ -181,14 +181,26 @@ Page({
       canvas.fillText(`房租：¥${billDetail.rentAmount}`, 30, y);
       
       y += 25;
-      canvas.fillText(`水费：¥${billDetail.waterAmount} (${billDetail.waterUsage}吨)`, 30, y);
+      canvas.fillText(`水费：¥${billDetail.waterAmount} (${billDetail.waterUsage}吨, ${billDetail.waterPrice}元/吨)`, 30, y);
       
       y += 25;
-      canvas.fillText(`电费：¥${billDetail.electricityAmount} (${billDetail.electricityUsage}度)`, 30, y);
+      canvas.fillText(`电费：¥${billDetail.electricityAmount} (${billDetail.electricityUsage}度, ${billDetail.electricityPrice}元/度)`, 30, y);
       
       if (billDetail.cleaningAmount > 0) {
         y += 25;
-        canvas.fillText(`清洁费：¥${billDetail.cleaningAmount}`, 30, y);
+        canvas.fillText(`卫生费/清洁费：¥${billDetail.cleaningAmount}`, 30, y);
+      }
+      if (billDetail.managementFee > 0) {
+        y += 25;
+        canvas.fillText(`管理费：¥${billDetail.managementFee}`, 30, y);
+      }
+      if (billDetail.internetFee > 0) {
+        y += 25;
+        canvas.fillText(`网费：¥${billDetail.internetFee}`, 30, y);
+      }
+      if (billDetail.otherFee > 0) {
+        y += 25;
+        canvas.fillText(`其他费用：¥${billDetail.otherFee}`, 30, y);
       }
       
       // 绘制总金额
@@ -221,7 +233,26 @@ Page({
     });
   },
 
-  
+  // 保存账单图片
+  async saveBillImage() {
+    wx.showLoading({ title: '生成中...' });
+    try {
+      const canvasData = await this.createBillCanvas();
+      wx.saveImageToPhotosAlbum({
+        filePath: canvasData.tempFilePath,
+        success: () => {
+          wx.showToast({ title: '已保存到相册', icon: 'success' });
+        },
+        fail: () => {
+          wx.showToast({ title: '保存失败，请检查权限', icon: 'none' });
+        }
+      });
+    } catch (error) {
+      wx.showToast({ title: '生成图片失败', icon: 'none' });
+    } finally {
+      wx.hideLoading();
+    }
+  },
 
   // 下拉刷新
   onPullDownRefresh() {

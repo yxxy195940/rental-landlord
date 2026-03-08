@@ -3,15 +3,12 @@
   <!-- 顶部固定区域 (仅选择器) -->
   <view id="header-fixed" class="header-fixed">
     <view class="selector-container">
-      <!-- 抄表月份选择 -->
+      <!-- 当前抄表月份展示 -->
       <view class="selector-item">
-        <text class="selector-label">抄表月份</text>
-        <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="onMonthChange">
-          <view class="picker-content">
-            <text class="picker-text">{{ displayMonth || '选择月份' }}</text>
-            <text class="picker-arrow">▼</text>
-          </view>
-        </picker>
+        <text class="selector-label">当前抄表月份</text>
+        <view class="picker-content picker-static">
+          <text class="picker-text">{{ currentMonthDisplay || '--' }}</text>
+        </view>
       </view>
 
       <!-- 选择楼栋 -->
@@ -38,22 +35,19 @@
   <!-- Tabs 和 表单内容 (页面主体，可滚动) -->
   <van-tabs active="{{ activeTab }}" bind:change="onTabChange" type="card" color="#1989fa" sticky offset-top="{{ headerHeight }}">
     <van-tab title="水表" name="water">
-      <view class="form-wrapper">
+          <view class="form-wrapper">
         <view class="form-container">
           <view class="form-header">
             <text class="header-item room-number">房间号</text>
-            <text class="header-item last-reading">上期读数</text>
             <text class="header-item current-reading">本期读数</text>
+            <text class="header-item last-reading">上期读数</text>
+            <text class="header-item last-time">上期时间</text>
           </view>
           <view class="form-body">
             <view class="form-row" wx:for="{{rooms}}" wx:key="_id">
               <text class="cell-item room-number">{{item.roomName}}</text>
-              <view class="cell-item last-reading">
-                <text class="reading-value">{{item.lastMeterReading.water}}</text>
-                <text class="reading-time">{{ item.previousMeterTimeText || '--' }}</text>
-              </view>
               <view class="cell-item current-reading">
-                <view class="reading-input">
+                <view class="reading-input" bindtap="onFieldClick" data-room-id="{{item._id}}" data-field="water">
                   <van-field
                     value="{{ item.currentMeterReading.water }}"
                     type="digit"
@@ -63,32 +57,31 @@
                     bind:input="onInput"
                     data-room-id="{{item._id}}"
                     data-field="water"
+                    disabled="{{!item.canEdit.water}}"
                   />
                 </view>
-                <text class="reading-time">{{ item.currentMeterTimeText || '--' }}</text>
               </view>
+              <text class="cell-item last-reading">{{ item.lastMeterReading.water }}</text>
+              <text class="cell-item last-time">{{ item.previousMeterTimeTextWater || '--' }}</text>
             </view>
           </view>
         </view>
       </view>
     </van-tab>
     <van-tab title="电表" name="electricity">
-      <view class="form-wrapper">
+          <view class="form-wrapper">
         <view class="form-container">
           <view class="form-header">
             <text class="header-item room-number">房间号</text>
-            <text class="header-item last-reading">上期读数</text>
             <text class="header-item current-reading">本期读数</text>
+            <text class="header-item last-reading">上期读数</text>
+            <text class="header-item last-time">上期时间</text>
           </view>
           <view class="form-body">
             <view class="form-row" wx:for="{{rooms}}" wx:key="_id">
               <text class="cell-item room-number">{{item.roomName}}</text>
-              <view class="cell-item last-reading">
-                <text class="reading-value">{{item.lastMeterReading.electricity}}</text>
-                <text class="reading-time">{{ item.previousMeterTimeText || '--' }}</text>
-              </view>
               <view class="cell-item current-reading">
-                <view class="reading-input">
+                <view class="reading-input" bindtap="onFieldClick" data-room-id="{{item._id}}" data-field="electricity">
                   <van-field
                     value="{{ item.currentMeterReading.electricity }}"
                     type="digit"
@@ -98,10 +91,12 @@
                     bind:input="onInput"
                     data-room-id="{{item._id}}"
                     data-field="electricity"
+                    disabled="{{!item.canEdit.electricity}}"
                   />
                 </view>
-                <text class="reading-time">{{ item.currentMeterTimeText || '--' }}</text>
               </view>
+              <text class="cell-item last-reading">{{ item.lastMeterReading.electricity }}</text>
+              <text class="cell-item last-time">{{ item.previousMeterTimeTextElectricity || '--' }}</text>
             </view>
           </view>
         </view>

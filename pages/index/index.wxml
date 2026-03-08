@@ -18,7 +18,7 @@
         </view>
         <view class="action-card" bindtap="goToMeterReading">
           <image class="action-icon" src="/images/bill-active.svg" />
-          <view class="action-text">抄表录入</view>
+          <view class="action-text">批量抄表</view>
         </view>
         <view class="action-card" bindtap="goToBills">
           <image class="action-icon" src="/images/bill.svg" />

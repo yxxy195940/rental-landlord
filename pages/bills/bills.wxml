@@ -76,9 +76,14 @@
           <view class="bill-card">
             <view class="card-title-line">
               <text class="room-number">{{item.roomNumber}}室</text>
-              <text class="payment-status {{item.isPaid ? 'status-paid' : 'status-unpaid'}}">
-                {{item.isPaid ? '已缴清' : '未缴费'}}
-              </text>
+              <view class="status-tags">
+                <text class="payment-status {{item.isUnbilled ? 'status-unpaid' : 'status-paid'}}">
+                  {{item.isUnbilled ? '未开单' : '已开单'}}
+                </text>
+                <text class="payment-status {{item.isPaid ? 'status-paid' : 'status-unpaid'}}" style="margin-left: 8rpx;">
+                  {{item.isPaid ? '已收款' : '未收款'}}
+                </text>
+              </view>
             </view>
             <view class="divider"></view>
             <view class="card-info-line">

@@ -15,8 +15,14 @@ Page({
     
     // 租赁信息
     rentStartDate: '',
+    contractEndDate: '',
+    rentDueDay: '',
     monthlyRent: '',
     deposit: '',
+    sanitationFee: '',
+    managementFee: '',
+    otherFee: '',
+    internetFee: '',
     remark: '',
     
     // 水电表信息
@@ -63,6 +69,11 @@ Page({
         this.setData({
           roomInfo: res,
           monthlyRent: res.monthlyRent || '',
+          deposit: res.deposit || '',
+          sanitationFee: res.sanitationFee || res.cleaningAmount || '',
+          managementFee: res.managementFee || '',
+          otherFee: res.otherFee || '',
+          internetFee: res.internetFee || '',
           currentWaterReading: res.lastWaterReading || '',
           currentElectricityReading: res.lastElectricityReading || ''
         })
@@ -91,6 +102,7 @@ Page({
     
     this.setData({
       rentStartDate: today,
+      contractEndDate: '',
       meterDate: today
     })
   },
@@ -127,7 +139,7 @@ Page({
    */
   validateForm() {
     const errors = {}
-    const { tenantName, tenantPhone, rentStartDate, monthlyRent, currentWaterReading, currentElectricityReading, meterDate } = this.data
+    const { tenantName, tenantPhone, rentStartDate, monthlyRent, currentWaterReading, currentElectricityReading, meterDate, rentDueDay, contractEndDate } = this.data
     
     // 手机号验证（可选，但如果填写需要格式正确）
     if (tenantPhone && !/^1[3-9]\d{9}$/.test(tenantPhone)) {
@@ -149,6 +161,14 @@ Page({
     
     if (hasElectricityReading && (isNaN(currentElectricityReading) || parseFloat(currentElectricityReading) < 0)) {
       errors.currentElectricityReading = '请输入有效的电表读数'
+    }
+    
+    if (rentDueDay && (isNaN(rentDueDay) || parseInt(rentDueDay) < 1 || parseInt(rentDueDay) > 31)) {
+      errors.rentDueDay = '交租日请输入1-31'
+    }
+    
+    if (contractEndDate && contractEndDate < rentStartDate) {
+      errors.contractEndDate = '退租日期不能早于开始日期'
     }
     
     this.setData({ errors })
@@ -176,8 +196,14 @@ Page({
         tenantPhone, 
         tenantIdCard,
         rentStartDate,
+        contractEndDate,
+        rentDueDay,
         monthlyRent,
         deposit,
+        sanitationFee,
+        managementFee,
+        otherFee,
+        internetFee,
         remark,
         currentWaterReading,
         currentElectricityReading,
@@ -191,8 +217,14 @@ Page({
         tenantPhone: tenantPhone.trim() || null,
         tenantIdCard: tenantIdCard ? tenantIdCard.trim() : '',
         contractStartDate: rentStartDate,
+        contractEndDate: contractEndDate || '',
+        rentDueDay: rentDueDay ? parseInt(rentDueDay) : null,
         monthlyRent: parseFloat(monthlyRent),
         deposit: deposit ? parseFloat(deposit) : 0,
+        sanitationFee: sanitationFee ? parseFloat(sanitationFee) : 0,
+        managementFee: managementFee ? parseFloat(managementFee) : 0,
+        otherFee: otherFee ? parseFloat(otherFee) : 0,
+        internetFee: internetFee ? parseFloat(internetFee) : 0,
         remark: remark || '',
         // 同时更新表读数
         lastWaterReading: (currentWaterReading && !isNaN(parseFloat(currentWaterReading))) ? parseFloat(currentWaterReading) : null,

@@ -304,6 +304,49 @@
   gap: 8rpx;
 }
 
+/* 费用列表 */
+.fee-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.fee-line:last-child {
+  border-bottom: none;
+}
+
+.fee-label {
+  color: #555;
+}
+
+.fee-value {
+  font-weight: 600;
+  color: #111;
+}
+
+.fee-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.fee-total-label {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.fee-total-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #ff6b35;
+}
+
 .warning-title {
   font-size: 28rpx;
   font-weight: 500;

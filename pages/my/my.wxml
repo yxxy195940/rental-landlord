@@ -7,6 +7,7 @@
     <view class="profile-text">
       <input type="nickname" class="nickname" placeholder="点击设置昵称" value="{{userInfo.nickName}}" bind:blur="onNicknameBlur"/>
       <text class="uid" wx:if="{{userInfo.phone || userInfo.openId}}">{{userInfo.phone || userInfo.openId}}</text>
+      <text class="uid" wx:if="{{userInfo.landlordName}}">房东：{{userInfo.landlordName}}</text>
     </view>
     <van-icon name="arrow" size="18" color="#c8c9cc" />
   </view>
@@ -26,6 +27,9 @@
 
   <!-- 第二组：其他 -->
   <van-cell-group>
+    <van-cell title="连接模式" label="{{useCloud ? '云函数（微信云开发）' : 'HTTP API'}}" is-link>
+      <switch slot="right-icon" checked="{{useCloud}}" bindchange="onToggleUseCloud" />
+    </van-cell>
     <van-cell title="分享给好友" icon="share-o" is-link bind:click="tapShare" />
     <van-cell title="关于与帮助" icon="question-o" is-link bind:click="goToAbout" />
   </van-cell-group>

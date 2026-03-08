@@ -68,6 +68,140 @@
       </view>
     </view>
 
+    <!-- 租赁信息 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📑</text>
+        <text class="section-title">租赁信息</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">起租日</text>
+            <picker mode="date" value="{{rentStartDate}}" data-field="rentStartDate" bindchange="onDateChange">
+              <view class="picker-display {{errors.rentStartDate ? 'error' : ''}}">
+                {{rentStartDate || '请选择日期'}}
+              </view>
+            </picker>
+          </view>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">到期日</text>
+            <picker mode="date" value="{{contractEndDate}}" data-field="contractEndDate" bindchange="onDateChange">
+              <view class="picker-display {{errors.contractEndDate ? 'error' : ''}}">
+                {{contractEndDate || '可选，便于提醒'}}
+              </view>
+            </picker>
+          </view>
+          <text class="error-text" wx:if="{{errors.contractEndDate}}">{{errors.contractEndDate}}</text>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">交租日</text>
+            <view class="input-with-unit">
+              <input
+                class="input {{errors.rentDueDay ? 'error' : ''}}"
+                placeholder="1-31"
+                value="{{rentDueDay}}"
+                data-field="rentDueDay"
+                bindinput="onInputChange"
+                type="number"
+                maxlength="2"
+              />
+              <text class="unit">号</text>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.rentDueDay}}">{{errors.rentDueDay}}</text>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label required">月租金</text>
+            <view class="input-with-unit">
+              <input
+                class="input {{errors.monthlyRent ? 'error' : ''}}"
+                placeholder="元/月"
+                value="{{monthlyRent}}"
+                data-field="monthlyRent"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">元</text>
+            </view>
+          </view>
+          <text class="error-text" wx:if="{{errors.monthlyRent}}">{{errors.monthlyRent}}</text>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">押金</text>
+            <view class="input-with-unit">
+              <input
+                class="input"
+                placeholder="押金金额"
+                value="{{deposit}}"
+                data-field="deposit"
+                bindinput="onInputChange"
+                type="digit"
+              />
+              <text class="unit">元</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 费用设置 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">💰</text>
+        <text class="section-title">杂费设置</text>
+      </view>
+      <view class="form-card">
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">卫生费</text>
+            <view class="input-with-unit">
+              <input class="input" placeholder="0" value="{{sanitationFee}}" data-field="sanitationFee" bindinput="onInputChange" type="digit" />
+              <text class="unit">元/月</text>
+            </view>
+          </view>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">管理费</text>
+            <view class="input-with-unit">
+              <input class="input" placeholder="0" value="{{managementFee}}" data-field="managementFee" bindinput="onInputChange" type="digit" />
+              <text class="unit">元/月</text>
+            </view>
+          </view>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">网费</text>
+            <view class="input-with-unit">
+              <input class="input" placeholder="0" value="{{internetFee}}" data-field="internetFee" bindinput="onInputChange" type="digit" />
+              <text class="unit">元/月</text>
+            </view>
+          </view>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">其他</text>
+            <view class="input-with-unit">
+              <input class="input" placeholder="0" value="{{otherFee}}" data-field="otherFee" bindinput="onInputChange" type="digit" />
+              <text class="unit">元/月</text>
+            </view>
+          </view>
+        </view>
+        <view class="form-row">
+          <view class="form-item">
+            <text class="label">备注</text>
+            <textarea class="textarea" placeholder="合同条款补充" value="{{remark}}" data-field="remark" bindinput="onInputChange" maxlength="200" />
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 租客信息 -->
     <view class="form-section">
       <view class="section-header">

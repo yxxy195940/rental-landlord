@@ -181,8 +181,10 @@ Page({
         electricFee: bill.electricityAmount,
         totalAmount: bill.totalAmount,
         isPaid: bill.status === 2,
+        isUnbilled: bill.status === 0,
         status: bill.status,
         statusText: bill.statusText,
+        billMonth: bill.billMonth,
         billDate: bill.billMonth + '-01',
         dueDate: bill.billMonth + '-25',
         tenantName: bill.tenantName,
@@ -265,9 +267,15 @@ Page({
   // 跳转到账单详情
   gotoBillDetail(e) {
     const bill = e.currentTarget.dataset.bill;
-    wx.navigateTo({
-      url: `/pages/billDetail/billDetail?billId=${bill.id}`
-    });
+    if (bill.isUnbilled) {
+      wx.navigateTo({
+        url: `/pages/bill-create/bill-create?roomId=${bill.roomId}&billMonth=${bill.billMonth}`
+      });
+    } else {
+      wx.navigateTo({
+        url: `/pages/billDetail/billDetail?billId=${bill.id}`
+      });
+    }
   },
 
   // 标记单个账单为已收款

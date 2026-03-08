@@ -151,15 +151,111 @@
       
       <!-- 次要操作按钮 -->
       <view class="secondary-actions">
+        <button class="secondary-btn" bindtap="previewCurrentBill" wx:if="{{roomDetail.status === 2}}">
+          <text class="btn-icon">🧾</text>
+          <text class="btn-text">生成本月账单</text>
+        </button>
         <button class="secondary-btn" bindtap="editRoom">
           <text class="btn-icon">⚙️</text>
           <text class="btn-text">修改费用信息</text>
+        </button>
+        <button class="secondary-btn" bindtap="showCopyDialog">
+          <text class="btn-icon">📋</text>
+          <text class="btn-text">批量复制</text>
         </button>
         <button class="secondary-btn" bindtap="viewMeterHistory" wx:if="{{roomDetail.status === 2}}">
           <text class="btn-icon">📊</text>
           <text class="btn-text">抄表记录</text>
         </button>
       </view>
+    </view>
+  </view>
+</view>
+
+<!-- 批量复制弹窗 -->
+<view class="modal-overlay large" wx:if="{{showCopyDialog}}" bindtap="closeCopyDialog">
+  <view class="modal-content large" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">房型批量复制</text>
+      <button class="modal-close" bindtap="closeCopyDialog">×</button>
+    </view>
+    
+    <view class="modal-body">
+      <view class="copy-settings">
+        <view class="form-row">
+          <view class="form-group half">
+            <view class="form-label">复制数量</view>
+            <view class="input-with-unit">
+              <input 
+                class="form-input"
+                value="{{copySettings.copyCount}}"
+                placeholder="1"
+                type="number"
+                data-field="copySettings.copyCount"
+                bindinput="onCopyFieldChange"
+                bindconfirm="generateRoomList"
+              />
+              <text class="input-unit">间</text>
+            </view>
+          </view>
+        </view>
+        
+        <button class="generate-btn" bindtap="generateRoomList">生成房间列表</button>
+      </view>
+      
+      <!-- 生成的房间列表 -->
+      <view class="generated-rooms" wx:if="{{copySettings.generatedRooms.length}}">
+        <view class="rooms-header">
+          <text class="rooms-title">生成的房间（{{copySettings.generatedRooms.length}}间）</text>
+        </view>
+        
+        <view class="rooms-columns">
+          <view class="rooms-column-left"></view>
+          <view class="rooms-column-right">
+            <text class="form-label rooms-column-title">房间号</text>
+            <text class="form-label rooms-column-title">房租</text>
+          </view>
+        </view>
+        <scroll-view scroll-y class="rooms-list">
+          <view 
+            class="room-preview" 
+            wx:for="{{copySettings.generatedRooms}}" 
+            wx:key="id"
+          >
+            <view class="room-inputs">
+              <input 
+                class="list-input"
+                placeholder="房间号"
+                type="number"
+                value="{{item.roomNumber}}"
+                data-index="{{index}}"
+                data-field="roomNumber"
+                bindinput="onGeneratedRoomFieldChange"
+              />
+              <input 
+                class="list-input"
+                placeholder="月租金"
+                type="number"
+                value="{{item.feeStandard.monthlyRent}}"
+                data-index="{{index}}"
+                data-field="feeStandard.monthlyRent"
+                bindinput="onGeneratedRoomFieldChange"
+              />
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="modal-btn cancel" bindtap="closeCopyDialog">取消</button>
+      <button 
+        class="modal-btn confirm" 
+        bindtap="batchSaveRooms"
+        disabled="{{!copySettings.generatedRooms.length}}"
+      >
+        确认复制
+      </button>
     </view>
   </view>
 </view>

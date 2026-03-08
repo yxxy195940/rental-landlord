@@ -48,6 +48,7 @@ exports.main = async (event, context) => {
       case 'update':
         return await updateBuilding(params, OPENID)
       case 'delete':
+      case 'batchDelete':
         return await deleteBuilding(params, OPENID)
       default:
         return {

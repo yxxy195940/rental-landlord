@@ -10,18 +10,18 @@
     "pages/update-register/update-register",
     "pages/batch-rent/batch-rent",
     "pages/meter-init/meter-init",
-    "pages/quickRent/quickRent",
     "pages/meter/meter",
+    "pages/meter-history/meter-history",
     "pages/meter-batch/meter-batch",
     "pages/bills/bills",
+    "pages/bill-create/bill-create",
     "pages/billDetail/billDetail",
-    "pages/my/my",
-    "pages/test-cloud/test-cloud"
+    "pages/my/my"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#1989fa",
-    "navigationBarTitleText": "房租管理",
+    "navigationBarTitleText": "楼栋管理",
     "navigationBarTextStyle": "white",
     "enablePullDownRefresh": true,
     "backgroundColor": "#f7f8fa"

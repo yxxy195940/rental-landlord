@@ -390,7 +390,19 @@ class Request {
       if (result && result.code !== undefined) {
         if (result.code === 200 || result.code === 0) {
           // 成功
-          resolve(result.data || result)
+          let payload = result.data !== undefined ? result.data : result
+          
+          if (payload === null || payload === undefined) {
+            payload = {
+              code: result.code,
+              message: result.message,
+              data: null
+            }
+          } else {
+            payload = this.attachResultMeta(payload, result)
+          }
+          
+          resolve(payload)
         } else {
           // 业务错误
           this.handleCloudFunctionBusinessError(result, reject)
@@ -461,6 +473,24 @@ class Request {
       message: errorMsg,
       data: error
     })
+  }
+
+  /**
+   * 将云函数的元信息附加到返回数据上
+   * @param {*} payload - 原始数据
+   * @param {Object} result - 云函数完整结果
+   * @returns {*} - 包含状态信息的数据
+   */
+  attachResultMeta(payload, result) {
+    if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+      return {
+        ...payload,
+        code: payload.code !== undefined ? payload.code : result.code,
+        message: payload.message !== undefined ? payload.message : result.message
+      }
+    }
+    
+    return payload
   }
 
   /**

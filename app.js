@@ -1,4 +1,5 @@
 // app.js
+import { config } from './utils/config'
 /**
  * 小程序应用入口文件
  * 
@@ -147,7 +148,8 @@ App({
     
     // 初始化云开发
     wx.cloud.init({
-      env: 'cloud1-2gy34tuh656ffa81', // 云环境ID，需要在微信开发者工具中创建
+      // 与 utils/config.js 中的 cloudConfig.env 对齐，避免环境漂移
+      env: config?.cloudConfig?.env || 'cloud1-2gy34tuh656ffa81',
       traceUser: true // 是否记录用户访问记录
     })
     

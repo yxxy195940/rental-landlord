@@ -244,7 +244,7 @@ async function getRoomList(params, openId) {
       roomNumber: room.roomName,
       location: `${room.propertyName || ''}`,
       monthlyRent: room.monthlyRent || 0,
-      status: room.status || 1, // 1-空置 2-已租 3-维修中
+      status: room.status || 1, // 1-空置 2-已租
       tenantName: room.tenantName || '',
       tenantPhone: room.tenantPhone || '',
       contractStartDate: room.rentStartDate || '',
@@ -335,6 +335,8 @@ async function getRoomDetail(params, openId) {
     // 转换数据格式
     const roomDetail = {
       id: room._id,
+      buildingId: room.buildingId || '',
+      buildingName: room.buildingName || '',
       roomNumber: room.roomName,
       location: room.propertyName || '',
       monthlyRent: room.monthlyRent || 0,
@@ -697,6 +699,11 @@ async function rentRoom(params, openId) {
       monthlyRent: monthlyRent || room.data.monthlyRent,
       deposit: deposit || room.data.deposit,
       remark: remark || '',
+      rentDueDay: params.rentDueDay || room.data.rentDueDay || null,
+      sanitationFee: params.sanitationFee !== undefined ? params.sanitationFee : room.data.sanitationFee || 0,
+      managementFee: params.managementFee !== undefined ? params.managementFee : room.data.managementFee || 0,
+      otherFee: params.otherFee !== undefined ? params.otherFee : room.data.otherFee || 0,
+      internetFee: params.internetFee !== undefined ? params.internetFee : room.data.internetFee || 0,
       updatedAt: new Date()
     }
     
@@ -715,6 +722,56 @@ async function rentRoom(params, openId) {
     const result = await db.collection('rooms').doc(roomId).update({
       data: updateData
     })
+
+    const hasWaterReading = lastWaterReading !== null && lastWaterReading !== undefined
+    const hasElectricityReading = lastElectricityReading !== null && lastElectricityReading !== undefined
+    if (hasWaterReading || hasElectricityReading) {
+      let meterTime = meterDate ? new Date(meterDate) : new Date()
+      if (isNaN(meterTime.getTime())) {
+        meterTime = new Date()
+      }
+      const readingMonth = `${meterTime.getFullYear()}-${String(meterTime.getMonth() + 1).padStart(2, '0')}`
+      const meterBase = {
+        roomId,
+        landlordId: openId,
+        readingMonth,
+        recordDate: meterDate || meterTime,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      const meterRecords = []
+
+      if (hasWaterReading) {
+        const prevWaterReading = room.data.lastWaterReading || 0
+        const waterValue = parseFloat(lastWaterReading)
+        meterRecords.push({
+          ...meterBase,
+          meterType: 'water',
+          waterReading: waterValue,
+          prevWaterReading: prevWaterReading,
+          waterUsage: Math.max(0, waterValue - prevWaterReading),
+          isBilled: true // 初始化读数视为已开单
+        })
+      }
+
+      if (hasElectricityReading) {
+        const prevElectricityReading = room.data.lastElectricityReading || 0
+        const electricityValue = parseFloat(lastElectricityReading)
+        meterRecords.push({
+          ...meterBase,
+          meterType: 'electricity',
+          electricityReading: electricityValue,
+          prevElectricityReading: prevElectricityReading,
+          electricityUsage: Math.max(0, electricityValue - prevElectricityReading),
+          isBilled: true // 初始化读数视为已开单
+        })
+      }
+
+      if (meterRecords.length > 0) {
+        await Promise.all(meterRecords.map(data => db.collection('meter').add({ data })))
+      }
+    }
     
     console.log('房间出租成功', {
       roomId,
@@ -751,7 +808,7 @@ async function rentRoom(params, openId) {
  */
 async function checkoutRoom(params, openId) {
   try {
-    const { roomId, checkoutDate } = params
+    const { roomId, checkoutDate, finalWaterReading, finalElectricityReading, meterDate } = params
     
     if (!roomId) {
       return {
@@ -788,18 +845,30 @@ async function checkoutRoom(params, openId) {
       }
     }
     
-    // 更新房间状态
+    // 更新房间状态及最终读数
+    const updateFields = {
+      status: 1, // 空置状态
+      tenantName: '',
+      tenantPhone: '',
+      tenantIdCard: '',
+      rentStartDate: '',
+      contractEndDate: '',
+      checkoutDate: checkoutDate || new Date(),
+      updatedAt: new Date()
+    }
+
+    if (finalWaterReading !== undefined && finalWaterReading !== null) {
+      updateFields.lastWaterReading = finalWaterReading
+    }
+    if (finalElectricityReading !== undefined && finalElectricityReading !== null) {
+      updateFields.lastElectricityReading = finalElectricityReading
+    }
+    if (meterDate) {
+      updateFields.lastMeterReadingDate = meterDate
+    }
+
     const result = await db.collection('rooms').doc(roomId).update({
-      data: {
-        status: 1, // 空置状态
-        tenantName: '',
-        tenantPhone: '',
-        tenantIdCard: '',
-        rentStartDate: '',
-        contractEndDate: '',
-        checkoutDate: checkoutDate || new Date(),
-        updatedAt: new Date()
-      }
+      data: updateFields
     })
     
     console.log('房间退租成功', {
@@ -844,7 +913,7 @@ async function updateRoomStatus(params, openId) {
     }
     
     // 验证状态值
-    if (![1, 2, 3].includes(status)) {
+    if (![1, 2].includes(status)) {
       return {
         code: 400,
         message: '无效的状态值',
@@ -967,7 +1036,15 @@ async function batchCreateRooms(params, openId) {
           electricityPrice: parseFloat(roomData.feeStandard?.electricityPrice) || 0.8,
           waterPrice: parseFloat(roomData.feeStandard?.waterPrice) || 4.5,
           internetFee: parseFloat(roomData.feeStandard?.internetFee) || 0,
+          sanitationFee: parseFloat(roomData.feeStandard?.sanitationFee) || parseFloat(roomData.feeStandard?.cleaningFee) || 0,
+          managementFee: parseFloat(roomData.feeStandard?.managementFee) || 0,
+          otherFee: parseFloat(roomData.feeStandard?.otherFee) || 0,
+          feeRemark: roomData.feeStandard?.feeRemark || '',
+          lastWaterReading: 0,
+          lastElectricityReading: 0,
           facilities: roomData.facilities || {},
+          remark: roomData.remarks || '',
+          images: roomData.images || [],
           status: 1, // 默认空置状态
           isDeleted: false,
           createdAt: new Date(),
@@ -1075,9 +1152,12 @@ async function getUserInfo(params, openId) {
  */
 async function recordMeter(params, openId) {
   try {
-    const { roomId, waterReading, electricityReading } = params;
+    const { roomId, waterReading, electricityReading, meterDate } = params;
 
-    if (!roomId || waterReading === undefined || electricityReading === undefined) {
+    const hasWater = waterReading !== undefined && waterReading !== null
+    const hasElectricity = electricityReading !== undefined && electricityReading !== null
+
+    if (!roomId || (!hasWater && !hasElectricity)) {
       return { code: 400, message: '参数不完整' };
     }
 
@@ -1091,15 +1171,77 @@ async function recordMeter(params, openId) {
     }
 
     const updateFields = {
-      lastWaterReading: parseFloat(waterReading),
-      lastElectricityReading: parseFloat(electricityReading),
-      lastMeterReadingDate: new Date(),
       updatedAt: new Date()
     };
+
+    if (hasWater) {
+      const waterValue = parseFloat(waterReading)
+      if (isNaN(waterValue)) {
+        return { code: 400, message: '水表读数无效' }
+      }
+      updateFields.lastWaterReading = waterValue
+    }
+
+    if (hasElectricity) {
+      const elecValue = parseFloat(electricityReading)
+      if (isNaN(elecValue)) {
+        return { code: 400, message: '电表读数无效' }
+      }
+      updateFields.lastElectricityReading = elecValue
+    }
+
+    if (hasWater || hasElectricity) {
+      updateFields.lastMeterReadingDate = meterDate || new Date()
+    }
 
     await db.collection('rooms').doc(roomId).update({
       data: updateFields
     });
+
+    if (hasWater || hasElectricity) {
+      let meterTime = meterDate ? new Date(meterDate) : new Date()
+      if (isNaN(meterTime.getTime())) {
+        meterTime = new Date()
+      }
+      const readingMonth = `${meterTime.getFullYear()}-${String(meterTime.getMonth() + 1).padStart(2, '0')}`
+      const meterBase = {
+        roomId,
+        landlordId: openId,
+        readingMonth,
+        recordDate: meterDate || meterTime,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      const meterRecords = []
+      if (hasWater) {
+        const prevWaterReading = room.data.lastWaterReading || 0
+        meterRecords.push({
+          ...meterBase,
+          meterType: 'water',
+          waterReading: updateFields.lastWaterReading,
+          prevWaterReading,
+          waterUsage: Math.max(0, updateFields.lastWaterReading - prevWaterReading),
+          isBilled: true // 初始化读数视为已开单
+        })
+      }
+
+      if (hasElectricity) {
+        const prevElectricityReading = room.data.lastElectricityReading || 0
+        meterRecords.push({
+          ...meterBase,
+          meterType: 'electricity',
+          electricityReading: updateFields.lastElectricityReading,
+          prevElectricityReading,
+          electricityUsage: Math.max(0, updateFields.lastElectricityReading - prevElectricityReading),
+          isBilled: true // 初始化读数视为已开单
+        })
+      }
+
+      if (meterRecords.length > 0) {
+        await Promise.all(meterRecords.map(data => db.collection('meter').add({ data })))
+      }
+    }
 
     await updateBuildingTimestamp(room.data.buildingId);
 
@@ -1186,6 +1328,56 @@ async function updateRegisterInfo(params, openId) {
     await db.collection('rooms').doc(roomId).update({
       data: updateData
     })
+
+    const hasWaterReading = lastWaterReading !== null && lastWaterReading !== undefined
+    const hasElectricityReading = lastElectricityReading !== null && lastElectricityReading !== undefined
+    if (hasWaterReading || hasElectricityReading) {
+      let meterTime = meterDate ? new Date(meterDate) : new Date()
+      if (isNaN(meterTime.getTime())) {
+        meterTime = new Date()
+      }
+      const readingMonth = `${meterTime.getFullYear()}-${String(meterTime.getMonth() + 1).padStart(2, '0')}`
+      const meterBase = {
+        roomId,
+        landlordId: openId,
+        readingMonth,
+        recordDate: meterDate || meterTime,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+
+      const meterRecords = []
+
+      if (hasWaterReading) {
+        const prevWaterReading = room.data.lastWaterReading || 0
+        const waterValue = parseFloat(lastWaterReading)
+        meterRecords.push({
+          ...meterBase,
+          meterType: 'water',
+          waterReading: waterValue,
+          prevWaterReading,
+          waterUsage: Math.max(0, waterValue - prevWaterReading),
+          isBilled: true // 初始化读数视为已开单
+        })
+      }
+
+      if (hasElectricityReading) {
+        const prevElectricityReading = room.data.lastElectricityReading || 0
+        const electricityValue = parseFloat(lastElectricityReading)
+        meterRecords.push({
+          ...meterBase,
+          meterType: 'electricity',
+          electricityReading: electricityValue,
+          prevElectricityReading,
+          electricityUsage: Math.max(0, electricityValue - prevElectricityReading),
+          isBilled: true // 初始化读数视为已开单
+        })
+      }
+
+      if (meterRecords.length > 0) {
+        await Promise.all(meterRecords.map(data => db.collection('meter').add({ data })))
+      }
+    }
     
     console.log('更新登记信息成功', {
       roomId,

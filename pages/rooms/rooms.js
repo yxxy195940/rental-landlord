@@ -23,13 +23,22 @@ Page({
       let buildings = buildingRes.list || [];
 
       if (buildings.length === 0) {
-        // If no buildings, create a default one
-        await request.request({ 
-          cloudFunc: 'building', 
-          data: { action: 'create', buildingData: { name: '楼栋A' } } 
+        wx.hideLoading();
+        wx.showModal({
+          title: '提示',
+          content: '需要先添加楼栋才能进行房间管理哦',
+          showCancel: false,
+          confirmText: '去添加',
+          success: (res) => {
+            if (res.confirm) {
+              wx.navigateTo({
+                url: '/pages/building-manage/building-manage',
+              });
+            }
+          }
         });
-        const newBuildingRes = await request.request({ cloudFunc: 'building', data: { action: 'list' } });
-        buildings = newBuildingRes.list || [];
+        this.setData({ buildings: [], rooms: [], filteredRooms: [] });
+        return;
       }
       
       buildings.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));

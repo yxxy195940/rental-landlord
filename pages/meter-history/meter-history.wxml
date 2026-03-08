@@ -1,0 +1,74 @@
+<view class="meter-history-page">
+  <view class="page-header">
+    <text class="page-title">抄表记录</text>
+    <text class="page-subtitle">按楼栋与房间快速查询历史水电读数</text>
+  </view>
+
+  <view class="selector-card">
+    <view class="selector-row">
+      <text class="selector-label">楼栋</text>
+      <picker class="selector-picker" range="{{buildings}}" range-key="name" value="{{buildingIndex}}" bindchange="onBuildingChange">
+        <view class="selector-value">
+          {{buildings.length ? buildings[buildingIndex].name : '暂无楼栋'}}
+        </view>
+      </picker>
+    </view>
+    <view class="selector-row">
+      <text class="selector-label">房间</text>
+      <picker class="selector-picker" range="{{rooms}}" range-key="roomName" value="{{roomIndex}}" bindchange="onRoomChange" disabled="{{rooms.length === 0}}">
+        <view class="selector-value selector-room">
+          {{rooms.length ? rooms[roomIndex].roomName : '暂无房间'}}
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="history-tabs">
+    <view class="tab-btn {{activeTab === 'water' ? 'active' : ''}}" data-tab="water" bindtap="onTabChange">水表记录</view>
+    <view class="tab-btn {{activeTab === 'electricity' ? 'active' : ''}}" data-tab="electricity" bindtap="onTabChange">电表记录</view>
+  </view>
+
+  <view class="record-section">
+    <block wx:if="{{meterRecords.length}}">
+      <view class="record-room-label" wx:if="{{currentRoomLabel}}">
+        {{currentRoomLabel}}
+      </view>
+      <view class="table-wrapper" wx:if="{{activeTab === 'water'}}">
+        <view class="table-row header">
+          <text class="col-index">序号</text>
+          <text class="col-read">水表读数</text>
+          <text class="col-time">抄表时间</text>
+        </view>
+        <view class="table-row" wx:for="{{meterRecords}}" wx:key="id">
+          <text class="col-index">{{index + 1}}</text>
+          <text class="col-read">{{item.waterReadingText}}</text>
+          <text class="col-time">{{item.waterTimeText}}</text>
+        </view>
+      </view>
+
+      <view class="table-wrapper" wx:elif="{{activeTab === 'electricity'}}">
+        <view class="table-row header">
+          <text class="col-index">序号</text>
+          <text class="col-read">电表读数</text>
+          <text class="col-time">抄表时间</text>
+        </view>
+        <view class="table-row" wx:for="{{meterRecords}}" wx:key="id">
+          <text class="col-index">{{index + 1}}</text>
+          <text class="col-read">{{item.electricityReadingText}}</text>
+          <text class="col-time">{{item.electricityTimeText}}</text>
+        </view>
+      </view>
+
+      <view class="list-status" wx:if="{{listLoading}}">
+        <text>正在加载...</text>
+      </view>
+      <view class="list-status muted" wx:elif="{{!hasMore}}">
+        <text>已经到底啦</text>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-text">{{emptyMessage}}</text>
+    </view>
+  </view>
+</view>

@@ -10,7 +10,8 @@ export const config = {
   
   // 云开发配置
   cloudConfig: {
-    env: 'rental-system-env', // 云环境ID
+    // 与 app.js 初始化保持一致，避免调用错环境
+    env: 'cloud1-2gy34tuh656ffa81', // 云环境ID
     timeout: 10000, // 云函数超时时间(毫秒)
     retryCount: 2, // 重试次数
   },
