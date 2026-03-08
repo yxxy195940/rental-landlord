@@ -151,10 +151,6 @@
       
       <!-- 次要操作按钮 -->
       <view class="secondary-actions">
-        <button class="secondary-btn" bindtap="previewCurrentBill" wx:if="{{roomDetail.status === 2}}">
-          <text class="btn-icon">🧾</text>
-          <text class="btn-text">生成本月账单</text>
-        </button>
         <button class="secondary-btn" bindtap="editRoom">
           <text class="btn-icon">⚙️</text>
           <text class="btn-text">修改费用信息</text>

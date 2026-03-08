@@ -233,27 +233,6 @@ Page({
     });
   },
 
-  // 保存账单图片
-  async saveBillImage() {
-    wx.showLoading({ title: '生成中...' });
-    try {
-      const canvasData = await this.createBillCanvas();
-      wx.saveImageToPhotosAlbum({
-        filePath: canvasData.tempFilePath,
-        success: () => {
-          wx.showToast({ title: '已保存到相册', icon: 'success' });
-        },
-        fail: () => {
-          wx.showToast({ title: '保存失败，请检查权限', icon: 'none' });
-        }
-      });
-    } catch (error) {
-      wx.showToast({ title: '生成图片失败', icon: 'none' });
-    } finally {
-      wx.hideLoading();
-    }
-  },
-
   // 下拉刷新
   onPullDownRefresh() {
     this.loadBillDetail().finally(() => {

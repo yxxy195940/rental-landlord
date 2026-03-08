@@ -87,9 +87,12 @@ Page({
 
       if (res && res.id) {
         wx.showToast({ title: '开单成功', icon: 'success' });
-        // 开单成功后，可以直接返回，因为列表页会在onShow时刷新
+        // 开单成功后，刷新并停留在当前页面其实不太合适，因为当前是预览页（无ID，无编号）
+        // 按照用户要求提交完成后刷新，建议是跳转到正式的详情页
         setTimeout(() => {
-          wx.navigateBack();
+          wx.redirectTo({
+            url: `/pages/billDetail/billDetail?billId=${res.id}`
+          });
         }, 1500);
       } else {
         throw new Error('开单失败');

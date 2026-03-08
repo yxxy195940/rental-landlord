@@ -1,0 +1,6 @@
+[Gemini Debug] OAuth exchange: POST https://oauth2.googleapis.com/token
+[Gemini Debug] OAuth exchange response: 400 Bad Request
+[Gemini Debug] OAuth exchange error body: {
+  "error": "invalid_grant",
+  "error_description": "Malformed auth code."
+}

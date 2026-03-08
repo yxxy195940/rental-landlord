@@ -11,9 +11,19 @@
       <!-- 头部信息 -->
       <view class="header-section">
         <view class="bill-title">{{billDetail.buildingName}} {{billDetail.roomNumber}}房账单</view>
-        <view wx:if="{{!isPreview}}" class="bill-no">账单编号: {{billDetail.billNo}}</view>
+        <view class="bill-no">账单编号: {{billDetail.billNo}}</view>
         <view class="status-badge {{billDetail.status === 2 ? 'paid' : 'unpaid'}}">
           {{billDetail.statusText}}
+        </view>
+
+        <!-- 头部操作按钮 -->
+        <view class="header-actions">
+          <button wx:if="{{billDetail.status !== 2}}" class="header-btn primary" bindtap="markBillPaid">
+            标记收款
+          </button>
+          <button class="header-btn secondary" bindtap="shareBill">
+            分享账单图片
+          </button>
         </view>
       </view>
 
@@ -130,32 +140,6 @@
           <text class="label">收款日期:</text>
           <text class="value">{{billDetail.paidAt}}</text>
         </view>
-      </view>
-
-      <!-- 操作按钮 -->
-      <view class="actions-section">
-        <!-- 预览模式下的按钮 -->
-        <block wx:if="{{isPreview}}">
-          <button class="action-btn secondary" bindtap="editRoomFee">
-            修改房间费用
-          </button>
-          <button class="action-btn primary" bindtap="confirmCreateBill">
-            确认开单
-          </button>
-        </block>
-        
-        <!-- 固化模式下的按钮 -->
-        <block wx:else>
-          <button wx:if="{{billDetail.status !== 2}}" class="action-btn primary" bindtap="markBillPaid">
-            标记收款
-          </button>
-          <button class="action-btn secondary" bindtap="shareBill">
-            分享账单图片
-          </button>
-          <button class="action-btn tertiary" bindtap="saveBillImage">
-            保存账单图片
-          </button>
-        </block>
       </view>
     </view>
 

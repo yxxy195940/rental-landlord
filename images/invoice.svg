@@ -1,0 +1,12 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- 收据/账单样式图标 -->
+  <rect x="22" y="10" width="36" height="60" rx="2" stroke="#1989fa" stroke-width="3" fill="none"/>
+  <line x1="30" y1="22" x2="50" y2="22" stroke="#1989fa" stroke-width="2"/>
+  <line x1="30" y1="30" x2="45" y2="30" stroke="#1989fa" stroke-width="2"/>
+  <line x1="30" y1="38" x2="50" y2="38" stroke="#1989fa" stroke-width="2"/>
+  <line x1="30" y1="46" x2="42" y2="46" stroke="#1989fa" stroke-width="2"/>
+  <line x1="30" y1="54" x2="48" y2="54" stroke="#1989fa" stroke-width="2"/>
+  <!-- 勾选标记 -->
+  <circle cx="58" cy="18" r="8" stroke="#1989fa" stroke-width="2" fill="none"/>
+  <polyline points="54,18 57,21 62,15" stroke="#1989fa" stroke-width="2" fill="none"/>
+</svg>

@@ -20,4 +20,15 @@
       <image class="cell-arrow" src="/images/arrow-down.svg" mode="aspectFit" />
     </view>
   </view>
+
+  <view class="cell-group">
+    <view class="cell" hover-class="cell-hover" bindtap="goToBills">
+      <image class="cell-icon" src="/images/invoice.svg" mode="aspectFit" />
+      <view class="cell-content">
+        <view class="cell-title">账单管理</view>
+        <view class="cell-desc">查看和管理租金账单</view>
+      </view>
+      <image class="cell-arrow" src="/images/arrow-down.svg" mode="aspectFit" />
+    </view>
+  </view>
 </view>

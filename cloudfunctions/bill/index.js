@@ -601,29 +601,60 @@ async function getBillStatistics(params, openId) {
   try {
     const { startMonth, endMonth } = params
     
-    // 构建查询条件
-    let query = db.collection('bills').where({
+    // 构建查询条件 - 需要将所有条件合并到一个 where 中
+    const whereCondition = {
       landlordId: openId
-    })
+    }
     
     if (startMonth && endMonth) {
-      query = query.where({
-        billMonth: _.gte(startMonth).and(_.lte(endMonth))
-      })
+      whereCondition.billMonth = _.gte(startMonth).and(_.lte(endMonth))
     }
     
     // 获取所有匹配的账单
-    const billsResult = await query.get()
+    const billsResult = await db.collection('bills').where(whereCondition).limit(1000).get()
     const bills = billsResult.data
     
+    // 获取当月未开单的房间统计 (逻辑参考 getBillList)
+    let unbilledCount = 0
+    if (startMonth && endMonth && startMonth === endMonth) {
+      const billMonth = startMonth
+      
+      // 1. 获取所有在租房间
+      const roomsResult = await db.collection('rooms').where({
+        landlordId: openId,
+        status: 2, // 已出租
+        isDeleted: false
+      }).limit(1000).get()
+      const rooms = roomsResult.data
+      
+      // 2. 获取当月已开单的房间ID
+      const billedRoomIds = new Set(bills.filter(b => b.status !== 3).map(b => b.roomId))
+      
+      // 3. 获取当月有未开单抄表记录的房间ID
+      const unbilledMetersResult = await db.collection('meter').where({
+        landlordId: openId,
+        readingMonth: billMonth,
+        isBilled: false
+      }).limit(1000).get()
+      const unbilledMeterRoomIds = new Set(unbilledMetersResult.data.map(m => m.roomId))
+      
+      // 4. 计算未开单总数
+      rooms.forEach(room => {
+        if (!billedRoomIds.has(room._id) || unbilledMeterRoomIds.has(room._id)) {
+          unbilledCount++
+        }
+      })
+    }
+
     // 计算统计数据
     const statistics = {
-      totalBills: bills.length,
+      totalBills: bills.length + unbilledCount,
       paidBills: bills.filter(b => b.status === 2).length,
-      unpaidBills: bills.filter(b => b.status === 1).length,
+      unpaidBills: bills.filter(b => b.status === 1).length + unbilledCount,
       totalAmount: bills.reduce((sum, b) => sum + (b.totalAmount || 0), 0),
       paidAmount: bills.filter(b => b.status === 2).reduce((sum, b) => sum + (b.paidAmount || 0), 0),
       unpaidAmount: bills.filter(b => b.status === 1).reduce((sum, b) => sum + (b.totalAmount || 0), 0),
+
       
       // 费用类型统计
       rentTotal: bills.reduce((sum, b) => sum + (b.rentAmount || 0), 0),

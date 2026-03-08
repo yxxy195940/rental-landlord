@@ -9,5 +9,9 @@ Page({
 
   goToMeterHistory() {
     wx.navigateTo({ url: '/pages/meter-history/meter-history' })
+  },
+
+  goToBills() {
+    wx.navigateTo({ url: '/pages/bills/bills' })
   }
 })

@@ -40,8 +40,8 @@ Page({
         },
       });
 
-      // 修复：兼容 request 返回 data 负载或完整 response 的情况
-      const stats = response?.code === 200 ? response.data : response;
+      // request.request 已返回 result.data，无需再解构
+      const stats = response;
       
       if (stats) {
         this.setData({

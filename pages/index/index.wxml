@@ -21,7 +21,7 @@
           <view class="action-text">批量抄表</view>
         </view>
         <view class="action-card" bindtap="goToBills">
-          <image class="action-icon" src="/images/bill.svg" />
+          <image class="action-icon" src="/images/invoice.svg" />
           <view class="action-text">账单中心</view>
         </view>
       </view>

@@ -69,6 +69,41 @@
   color: #ff976a;
 }
 
+.header-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.header-btn {
+  flex: 1;
+  max-width: 140px;
+  height: 36px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.header-btn.primary {
+  background: #1989fa;
+  color: white;
+}
+
+.header-btn.secondary {
+  background: #f7f8fa;
+  color: #323233;
+  border: 1px solid #ebedf0;
+}
+
+.header-btn:active {
+  opacity: 0.8;
+}
+
 /* 通用section样式 */
 .info-section,
 .fees-section,
